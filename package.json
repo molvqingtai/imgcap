@@ -30,8 +30,6 @@
     "avif",
     "jpeg",
     "png",
-    "browser",
-    "typescript",
     "upload",
     "quality",
     "canvas",
@@ -39,6 +37,14 @@
   ],
   "author": "molvqingtai",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/molvqingtai/imgcap.git"
+  },
+  "bugs": {
+    "url": "https://github.com/molvqingtai/imgcap/issues"
+  },
+  "homepage": "https://github.com/molvqingtai/imgcap#readme",
   "devDependencies": {
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
