@@ -1,8 +1,14 @@
 # ImgCap
 
+[![version](https://img.shields.io/github/v/release/molvqingtai/imgcap)](https://www.npmjs.com/package/imgcap) [![workflow](https://github.com/molvqingtai/imgcap/actions/workflows/ci.yml/badge.svg)](https://github.com/molvqingtai/imgcap/actions) [![download](https://img.shields.io/npm/dt/imgcap)](https://www.npmjs.com/package/imgcap) [![npm package minimized gzipped size](https://img.shields.io/bundlejs/size/imgcap)](https://www.npmjs.com/package/imgcap)
+
 > Automatically compress images to exact file size using binary search algorithm. No more "file too large" errors.
 
-## Why ImgCap?
+### Why ImgCap?
+
+```shell
+pnpm install imgcap
+```
 
 [![version](https://img.shields.io/github/v/release/molvqingtai/imgcap)](https://www.npmjs.com/package/imgcap) [![workflow](https://github.com/molvqingtai/imgcap/actions/workflows/ci.yml/badge.svg)](https://github.com/molvqingtai/imgcap/actions) [![download](https://img.shields.io/npm/dt/imgcap)](https://www.npmjs.com/package/imgcap) [![npm package minimized gzipped size](https://img.shields.io/bundlejs/size/imgcap)](https://www.npmjs.com/package/imgcap)
 
@@ -20,7 +26,11 @@ Users often encounter "File too large" errors when uploading images, forcing the
 ✅ await imgcap(userPhoto, { targetSize: 2 * 1024 * 1024 })
 ```
 
+<<<<<<< HEAD
 ## Usage
+=======
+### Usage
+>>>>>>> develop
 
 ```typescript
 import imgcap from 'imgcap'
@@ -35,7 +45,7 @@ const webp = await imgcap(imageFile, {
 })
 ```
 
-## API
+### API
 
 ```typescript
 interface Options {
@@ -49,6 +59,6 @@ type ImageType = 'image/jpeg' | 'image/png' | 'image/webp' | 'image/avif'
 
 **Browser only** - Requires OffscreenCanvas support (modern browsers).
 
-## License
+### License
 
 MIT © [molvqingtai](https://github.com/molvqingtai)
