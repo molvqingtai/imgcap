@@ -3,12 +3,17 @@
   "version": "1.0.0",
   "description": "Precisely cap your image size.",
   "type": "module",
-  "main": "index.js",
+  "main": "core/dist/index.js",
   "scripts": {
-    "dev": "tsdown src/index.ts --dts --format esm --sourcemap --watch",
-    "build": "tsdown src/index.ts --dts --format esm --sourcemap --minify --clean",
-    "lint": "eslint --fix --cache",
-    "check": "tsc --noEmit",
+    "dev": "pnpm --filter core dev",
+    "build": "pnpm --filter core build",
+    "lint": "npm-run-all -p lint:*",
+    "check": "npm-run-all -p check:*",
+    "test": "pnpm --filter __tests__ test",
+    "lint:core": "pnpm --filter core lint",
+    "lint:tests": "pnpm --filter __tests__ lint",
+    "check:core": "pnpm --filter core check",
+    "check:tests": "pnpm --filter __tests__ check",
     "prepare": "husky"
   },
   "author": "molvqingtai",
@@ -17,17 +22,11 @@
   "devDependencies": {
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
-    "@eslint/js": "^9.31.0",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
-    "eslint": "^9.31.0",
-    "eslint-plugin-prettier": "^5.5.1",
-    "globals": "^16.3.0",
     "husky": "^9.1.7",
-    "semantic-release": "^24.2.7",
-    "tsdown": "^0.12.9",
-    "typescript": "^5.8.3",
-    "typescript-eslint": "^8.36.0"
+    "npm-run-all": "^4.1.5",
+    "semantic-release": "^24.2.7"
   },
   "publishConfig": {
     "access": "public"

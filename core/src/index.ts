@@ -1,4 +1,4 @@
-export type ImageType = 'image/jpeg' | 'image/png' | 'image/webp'
+export type ImageType = 'image/jpeg' | 'image/png' | 'image/webp' | 'image/avif'
 
 export interface Options {
   targetSize: number
