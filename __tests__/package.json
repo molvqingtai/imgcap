@@ -6,7 +6,8 @@
   "scripts": {
     "test": "vitest --browser.headless",
     "lint": "eslint --fix --cache",
-    "check": "tsc --noEmit"
+    "check": "tsc --noEmit",
+    "postinstall": "playwright install --with-deps chromium"
   },
   "keywords": [],
   "author": "molvqingtai",
