@@ -8,6 +8,8 @@ Automatically compress images to approximate target file size using binary searc
 pnpm install imgcap
 ```
 
+**[View Demo](https://molvqingtai.github.io/imgcap/demo.html)**
+
 ### Why?
 
 Users often encounter "File too large" errors when uploading images, forcing them to manually compress files using external tools. This creates friction and leads to user dropout. imgcap solves this by automatically compressing images to approximate your target size - no user intervention needed.
