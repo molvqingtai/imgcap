@@ -1,8 +1,13 @@
+/** Supported image formats */
 export type ImageType = 'image/jpeg' | 'image/png' | 'image/webp' | 'image/avif'
 
+/** Compression options */
 export interface Options {
+  /** Target file size in bytes */
   targetSize: number
+  /** Size tolerance in bytes (default: -1024) */
   toleranceSize?: number
+  /** Output image format (default: same as input) */
   outputType?: ImageType
 }
 
@@ -51,7 +56,26 @@ const compress = async (
   }
 }
 
-export const imgCap = async (input: Blob, options: Options) => {
+/**
+ * Compress an image to exact target file size using binary search algorithm.
+ *
+ * @param input - Image blob/file to compress
+ * @param options - Compression options
+ * @returns Promise that resolves to compressed image blob
+ *
+ * @example
+ * ```typescript
+ * // Basic usage - compress to 500KB
+ * const compressed = await imgcap(imageFile, { targetSize: 500 * 1024 })
+ *
+ * // With format conversion
+ * const webp = await imgcap(imageFile, {
+ *   targetSize: 300 * 1024,
+ *   outputType: 'image/webp'
+ * })
+ * ```
+ */
+export const imgcap = async (input: Blob, options: Options) => {
   const { targetSize, toleranceSize = -1024 } = options
 
   if (!['image/jpeg', 'image/png', 'image/webp', 'image/avif'].includes(input.type)) {
@@ -77,4 +101,4 @@ export const imgCap = async (input: Blob, options: Options) => {
   return await compress(imageBitmap, targetSize, low, high, toleranceSize, outputType)
 }
 
-export default imgCap
+export default imgcap
