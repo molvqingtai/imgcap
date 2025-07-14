@@ -1,6 +1,6 @@
 # ImgCap
 
-Automatically compress images to exact file size using binary search algorithm
+Automatically compress images to exact file size using binary search algorithm.
 
 [![version](https://img.shields.io/github/v/release/molvqingtai/imgcap)](https://www.npmjs.com/package/imgcap) [![workflow](https://github.com/molvqingtai/imgcap/actions/workflows/ci.yml/badge.svg)](https://github.com/molvqingtai/imgcap/actions) [![download](https://img.shields.io/npm/dt/imgcap)](https://www.npmjs.com/package/imgcap) [![npm package minimized gzipped size](https://img.shields.io/bundlejs/size/imgcap)](https://www.npmjs.com/package/imgcap)
 
