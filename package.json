@@ -18,7 +18,7 @@
   },
   "keywords": [
     "image",
-    "compression", 
+    "compression",
     "compress",
     "resize",
     "optimize",
@@ -39,7 +39,6 @@
   ],
   "author": "molvqingtai",
   "license": "MIT",
-  "packageManager": "pnpm@10.5.2",
   "devDependencies": {
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
