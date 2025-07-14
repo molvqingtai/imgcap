@@ -42,7 +42,7 @@ const compress = async (
   // Check if we hit the target exactly or very close
   // Dynamic tolerance: 1KB or 1% of target size (whichever is larger), capped at 1MB
   // - Small files (<100KB): 1KB tolerance for high precision
-  // - Medium files (100KB-100MB): 1% tolerance for reasonable flexibility  
+  // - Medium files (100KB-100MB): 1% tolerance for reasonable flexibility
   // - Large files (>100MB): 1MB tolerance to avoid excessive iterations
   const tolerance = Math.min(Math.max(1024, targetSize * 0.01), 1024 * 1024)
   if (Math.abs(currentSize - targetSize) <= tolerance) {
@@ -63,10 +63,10 @@ const compress = async (
 
 /**
  * Compress an image to approximate target file size using binary search algorithm.
- * 
+ *
  * The actual output size will be close to the target size within a smart tolerance range:
  * - Small files (<100KB): ±1KB tolerance
- * - Medium files (100KB-100MB): ±1% tolerance  
+ * - Medium files (100KB-100MB): ±1% tolerance
  * - Large files (>100MB): ±1MB tolerance
  *
  * @param input - Image blob/file to compress

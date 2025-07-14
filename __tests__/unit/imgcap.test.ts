@@ -60,9 +60,9 @@ describe('imgcap', () => {
 
     it('should produce reasonably sized output', async () => {
       // Test that algorithm produces reasonable results
-      const targetSize = 3000 // Use 3KB target 
+      const targetSize = 3000 // Use 3KB target
       const result = await imgcap(testImageBlob, { targetSize })
-      
+
       expect(result).toBeInstanceOf(Blob)
       expect(result.size).toBeLessThanOrEqual(targetSize + 1000) // Allow tolerance
       expect(result.size).toBeGreaterThan(1000) // Should not be too small
