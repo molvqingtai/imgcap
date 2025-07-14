@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/molvqingtai/imgcap/compare/v1.0.1...v1.0.2) (2025-07-14)
+
+
+### Bug Fixes
+
+* optimize result selection logic in compression algorithm ([48505de](https://github.com/molvqingtai/imgcap/commit/48505de64e9d361266c604c92fb9f62c64ba5f75))
+
 ## [1.0.1](https://github.com/molvqingtai/imgcap/compare/v1.0.0...v1.0.1) (2025-07-14)
 
 
