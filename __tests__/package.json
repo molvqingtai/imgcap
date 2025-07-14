@@ -1,7 +1,7 @@
 {
   "name": "__tests__",
   "version": "1.0.0",
-  "description": "",
+  "description": "Automatically compress images to exact file size using binary search algorithm.",
   "main": "index.js",
   "scripts": {
     "test": "vitest --browser.headless",

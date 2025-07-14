@@ -1,7 +1,7 @@
 {
   "name": "core",
   "version": "1.0.0",
-  "description": "Precisely cap your image size.",
+  "description": "Automatically compress images to exact file size using binary search algorithm.",
   "main": "dist/index.js",
   "type": "module",
   "scripts": {
