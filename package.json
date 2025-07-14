@@ -1,0 +1,35 @@
+{
+  "name": "imgcap",
+  "version": "1.0.0",
+  "description": "Precisely cap your image size.",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsdown src/index.ts --dts --format esm --sourcemap --watch",
+    "build": "tsdown src/index.ts --dts --format esm --sourcemap --minify --clean",
+    "lint": "eslint --fix --cache",
+    "check": "tsc --noEmit",
+    "prepare": "husky"
+  },
+  "author": "molvqingtai",
+  "license": "MIT",
+  "packageManager": "pnpm@10.5.2",
+  "devDependencies": {
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
+    "@eslint/js": "^9.31.0",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "eslint": "^9.31.0",
+    "eslint-plugin-prettier": "^5.5.1",
+    "globals": "^16.3.0",
+    "husky": "^9.1.7",
+    "semantic-release": "^24.2.7",
+    "tsdown": "^0.12.9",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.36.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
