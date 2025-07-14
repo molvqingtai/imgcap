@@ -39,6 +39,11 @@ const compress = async (
     bestBlob = outputBlob
   }
 
+  // Precision limit reached - return best result
+  if ((high - low) / high < 0.01) {
+    return bestBlob
+  }
+
   // Check if we hit the target exactly or very close
   // Dynamic tolerance: 1KB or 1% of target size (whichever is larger), capped at 1MB
   // - Small files (<100KB): 1KB tolerance for high precision
@@ -46,12 +51,8 @@ const compress = async (
   // - Large files (>100MB): 1MB tolerance to avoid excessive iterations
   const tolerance = Math.min(Math.max(1024, targetSize * 0.01), 1024 * 1024)
   if (Math.abs(currentSize - targetSize) <= tolerance) {
-    return outputBlob
-  }
-
-  // Precision limit reached - return best result
-  if ((high - low) / high < 0.01) {
-    return bestBlob
+    // Return the result that's closest to target size
+    return Math.abs(currentSize - targetSize) <= Math.abs(bestBlob.size - targetSize) ? outputBlob : bestBlob
   }
 
   if (currentSize > targetSize) {
