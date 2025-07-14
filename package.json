@@ -1,6 +1,6 @@
 {
   "name": "imgcap",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Automatically compress images to exact file size using binary search algorithm.",
   "type": "module",
   "main": "core/dist/index.js",
