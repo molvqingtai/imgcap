@@ -3,10 +3,8 @@ export type ImageType = 'image/jpeg' | 'image/png' | 'image/webp' | 'image/avif'
 
 /** Compression options */
 export interface Options {
-  /** Target file size in bytes */
+  /** Target file size in bytes (result will approximate this value) */
   targetSize: number
-  /** Size tolerance in bytes (default: -1024) */
-  toleranceSize?: number
   /** Output image format (default: same as input) */
   outputType?: ImageType
 }
@@ -16,8 +14,8 @@ const compress = async (
   targetSize: number,
   low: number,
   high: number,
-  toleranceSize: number,
-  outputType: ImageType
+  outputType: ImageType,
+  bestBlob?: Blob
 ): Promise<Blob> => {
   // Calculate the middle quality value
   const mid = (low + high) / 2
@@ -36,54 +34,68 @@ const compress = async (
 
   const currentSize = outputBlob.size
 
-  // Check if current size is within tolerance range
-  const lowerBound = targetSize + Math.min(0, toleranceSize)
-  const upperBound = targetSize + Math.max(0, toleranceSize)
+  // Update best result - track the closest to target size
+  if (!bestBlob || Math.abs(currentSize - targetSize) < Math.abs(bestBlob.size - targetSize)) {
+    bestBlob = outputBlob
+  }
 
-  if (currentSize >= lowerBound && currentSize <= upperBound) {
+  // Check if we hit the target exactly or very close
+  // Dynamic tolerance: 1KB or 1% of target size (whichever is larger), capped at 1MB
+  // - Small files (<100KB): 1KB tolerance for high precision
+  // - Medium files (100KB-100MB): 1% tolerance for reasonable flexibility  
+  // - Large files (>100MB): 1MB tolerance to avoid excessive iterations
+  const tolerance = Math.min(Math.max(1024, targetSize * 0.01), 1024 * 1024)
+  if (Math.abs(currentSize - targetSize) <= tolerance) {
     return outputBlob
   }
 
-  // Use relative error
-  if ((high - low) / high < 0.001) {
-    return outputBlob
+  // Precision limit reached - return best result
+  if ((high - low) / high < 0.01) {
+    return bestBlob
   }
 
   if (currentSize > targetSize) {
-    return await compress(imageBitmap, targetSize, low, mid, toleranceSize, outputType)
+    return await compress(imageBitmap, targetSize, low, mid, outputType, bestBlob)
   } else {
-    return await compress(imageBitmap, targetSize, mid, high, toleranceSize, outputType)
+    return await compress(imageBitmap, targetSize, mid, high, outputType, bestBlob)
   }
 }
 
 /**
- * Compress an image to exact target file size using binary search algorithm.
+ * Compress an image to approximate target file size using binary search algorithm.
+ * 
+ * The actual output size will be close to the target size within a smart tolerance range:
+ * - Small files (<100KB): ±1KB tolerance
+ * - Medium files (100KB-100MB): ±1% tolerance  
+ * - Large files (>100MB): ±1MB tolerance
  *
  * @param input - Image blob/file to compress
- * @param options - Compression options
+ * @param options - Compression options with targetSize as approximate target
  * @returns Promise that resolves to compressed image blob
  *
  * @example
  * ```typescript
- * // Basic usage - compress to 500KB
+ * // Basic usage - compress to approximately 500KB
  * const compressed = await imgcap(imageFile, { targetSize: 500 * 1024 })
+ * // Result: ~495-505KB depending on image characteristics
  *
  * // With format conversion
  * const webp = await imgcap(imageFile, {
  *   targetSize: 300 * 1024,
  *   outputType: 'image/webp'
  * })
+ * // Result: ~297-303KB in WebP format
  * ```
  */
 export const imgcap = async (input: Blob, options: Options) => {
-  const { targetSize, toleranceSize = -1024 } = options
+  const { targetSize } = options
 
   if (!['image/jpeg', 'image/png', 'image/webp', 'image/avif'].includes(input.type)) {
     throw new Error('Only PNG, JPEG, WebP and AVIF images are supported.')
   }
 
-  if (Math.abs(toleranceSize) < 1024) {
-    throw new Error('Tolerance size must be at least ±1024 bytes.')
+  if (targetSize < 1024) {
+    throw new Error('Target size must be at least 1KB (1024 bytes).')
   }
 
   const outputType = options.outputType || (input.type as ImageType)
@@ -98,7 +110,7 @@ export const imgcap = async (input: Blob, options: Options) => {
   const low = 0
   const high = 1
 
-  return await compress(imageBitmap, targetSize, low, high, toleranceSize, outputType)
+  return await compress(imageBitmap, targetSize, low, high, outputType)
 }
 
 export default imgcap

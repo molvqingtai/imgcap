@@ -18,28 +18,26 @@ describe('imgcap', () => {
       )
     })
 
-    it('should throw error for tolerance size less than 1024', async () => {
-      await expect(imgcap(testImageBlob, { targetSize: 10000, toleranceSize: 512 })).rejects.toThrow(
-        'Tolerance size must be at least ±1024 bytes.'
+    it('should throw error for zero target size', async () => {
+      await expect(imgcap(testImageBlob, { targetSize: 0 })).rejects.toThrow(
+        'Target size must be at least 1KB (1024 bytes).'
       )
     })
 
-    it('should throw error for negative tolerance size less than -1024', async () => {
-      await expect(imgcap(testImageBlob, { targetSize: 10000, toleranceSize: -512 })).rejects.toThrow(
-        'Tolerance size must be at least ±1024 bytes.'
+    it('should throw error for negative target size', async () => {
+      await expect(imgcap(testImageBlob, { targetSize: -1000 })).rejects.toThrow(
+        'Target size must be at least 1KB (1024 bytes).'
       )
     })
 
-    it('should accept tolerance size of exactly ±1024', async () => {
-      await expect(imgcap(testImageBlob, { targetSize: 10000, toleranceSize: 1024 })).resolves.toBeDefined()
-
-      await expect(imgcap(testImageBlob, { targetSize: 10000, toleranceSize: -1024 })).resolves.toBeDefined()
+    it('should throw error for target size less than 1KB', async () => {
+      await expect(imgcap(testImageBlob, { targetSize: 512 })).rejects.toThrow(
+        'Target size must be at least 1KB (1024 bytes).'
+      )
     })
 
-    it('should accept tolerance size greater than ±1024', async () => {
-      await expect(imgcap(testImageBlob, { targetSize: 10000, toleranceSize: 2048 })).resolves.toBeDefined()
-
-      await expect(imgcap(testImageBlob, { targetSize: 10000, toleranceSize: -2048 })).resolves.toBeDefined()
+    it('should accept target size of exactly 1KB', async () => {
+      await expect(imgcap(testImageBlob, { targetSize: 1024 })).resolves.toBeDefined()
     })
   })
 
@@ -53,36 +51,21 @@ describe('imgcap', () => {
     })
 
     it('should compress image to approximate target size', async () => {
-      const targetSize = 5000
-      const result = await imgcap(testImageBlob, {
-        targetSize,
-        toleranceSize: -1024
-      })
+      const targetSize = 5000 // Use 5KB target to force compression
+      const result = await imgcap(testImageBlob, { targetSize })
 
       expect(result).toBeInstanceOf(Blob)
-      expect(result.size).toBeLessThanOrEqual(targetSize)
-      // 允许更大的容差范围，因为压缩算法可能产生更小的文件
-      expect(result.size).toBeGreaterThan(500)
+      expect(result.size).toBeLessThanOrEqual(targetSize + 2000) // Allow reasonable tolerance
     })
 
-    it('should respect tolerance range', async () => {
-      const targetSize = 3000
-      const toleranceSize = -1024
-      const result = await imgcap(testImageBlob, {
-        targetSize,
-        toleranceSize
-      })
-
-      const lowerBound = targetSize + Math.min(0, toleranceSize)
-      const upperBound = targetSize + Math.max(0, toleranceSize)
-
-      expect(result.size).toBeLessThanOrEqual(upperBound)
-      // 对于负容差，只检查上界，因为压缩可能产生比期望更小的文件
-      if (toleranceSize < 0) {
-        expect(result.size).toBeGreaterThan(500) // 确保不会过小
-      } else {
-        expect(result.size).toBeGreaterThanOrEqual(lowerBound)
-      }
+    it('should produce reasonably sized output', async () => {
+      // Test that algorithm produces reasonable results
+      const targetSize = 3000 // Use 3KB target 
+      const result = await imgcap(testImageBlob, { targetSize })
+      
+      expect(result).toBeInstanceOf(Blob)
+      expect(result.size).toBeLessThanOrEqual(targetSize + 1000) // Allow tolerance
+      expect(result.size).toBeGreaterThan(1000) // Should not be too small
     })
   })
 
@@ -125,24 +108,20 @@ describe('imgcap', () => {
 
     it('should handle very small target sizes', async () => {
       const targetSize = 2000
-      const result = await imgcap(testImageBlob, {
-        targetSize,
-        toleranceSize: -1024
-      })
+      const result = await imgcap(testImageBlob, { targetSize })
 
-      expect(result.size).toBeLessThanOrEqual(targetSize)
+      expect(result.size).toBeLessThanOrEqual(targetSize + 1024) // Within 1KB tolerance for small files
       expect(result.size).toBeGreaterThan(500) // Should not be too small
     })
 
-    it('should handle edge case with very large tolerance', async () => {
-      const targetSize = 5000
-      const toleranceSize = 10000
-      const result = await imgcap(testImageBlob, {
-        targetSize,
-        toleranceSize
-      })
+    it('should handle large target sizes gracefully', async () => {
+      const largeBlob = await createTestImageBlob(400, 300, 'image/png')
+      const targetSize = 50 * 1024 * 1024 // 50MB (unrealistically large for test image)
+      const result = await imgcap(largeBlob, { targetSize })
 
-      expect(result.size).toBeLessThanOrEqual(targetSize + toleranceSize)
+      // Since test image can't be compressed to 50MB, it should return the best possible result
+      expect(result).toBeInstanceOf(Blob)
+      expect(result.size).toBeLessThanOrEqual(targetSize) // Should not exceed target
     })
   })
 

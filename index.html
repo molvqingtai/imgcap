@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>imgcap Demo - Precise Image Compression</title>
+    <script type="importmap">
+      {
+        "imports": {
+          "imgcap": "https://esm.sh/imgcap@latest"
+        }
+      }
+    </script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+
+      .header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 30px;
+        text-align: center;
+      }
+
+      .header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+      }
+
+      .header p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+      }
+
+      .content {
+        padding: 40px;
+      }
+
+      .upload-section {
+        margin-bottom: 40px;
+      }
+
+      .upload-area {
+        border: 3px dashed #ddd;
+        border-radius: 15px;
+        padding: 40px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: #fafafa;
+      }
+
+      .upload-area:hover {
+        border-color: #667eea;
+        background: #f0f4ff;
+      }
+
+      .upload-area.dragover {
+        border-color: #667eea;
+        background: #e8f2ff;
+        transform: scale(1.02);
+      }
+
+      .upload-icon {
+        font-size: 3rem;
+        margin-bottom: 20px;
+        color: #667eea;
+      }
+
+      .upload-text {
+        font-size: 1.2rem;
+        color: #666;
+        margin-bottom: 10px;
+      }
+
+      .upload-hint {
+        font-size: 0.9rem;
+        color: #999;
+      }
+
+      .file-input {
+        display: none;
+      }
+
+      .controls {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .control-group {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+      }
+
+      .control-group label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 10px;
+        color: #333;
+      }
+
+      .control-group input,
+      .control-group select {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #e1e5e9;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+      }
+
+      .control-group input:focus,
+      .control-group select:focus {
+        outline: none;
+        border-color: #667eea;
+      }
+
+      .compress-btn {
+        width: 100%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+        margin-bottom: 30px;
+      }
+
+      .compress-btn:hover:not(:disabled) {
+        transform: translateY(-2px);
+      }
+
+      .compress-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .results {
+        display: none;
+        background: #f8f9fa;
+        border-radius: 15px;
+        padding: 30px;
+      }
+
+      .results.show {
+        display: block;
+      }
+
+      .result-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px solid #e1e5e9;
+      }
+
+      .result-item:last-child {
+        border-bottom: none;
+      }
+
+      .result-label {
+        font-weight: 600;
+        color: #333;
+      }
+
+      .result-value {
+        color: #667eea;
+        font-weight: 500;
+      }
+
+      .image-preview {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-top: 20px;
+      }
+
+      .preview-item {
+        text-align: center;
+      }
+
+      .preview-item h4 {
+        margin-bottom: 10px;
+        color: #333;
+      }
+
+      .preview-item img {
+        max-width: 100%;
+        max-height: 200px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .status {
+        margin: 20px 0;
+        padding: 15px;
+        border-radius: 8px;
+        text-align: center;
+        display: none;
+      }
+
+      .status.show {
+        display: block;
+      }
+
+      .status.loading {
+        background: #e3f2fd;
+        color: #1976d2;
+      }
+
+      .status.success {
+        background: #e8f5e8;
+        color: #2e7d32;
+      }
+
+      .status.error {
+        background: #ffebee;
+        color: #c62828;
+      }
+
+      @media (max-width: 768px) {
+        .controls {
+          grid-template-columns: 1fr;
+        }
+
+        .image-preview {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>🎯 imgcap Demo</h1>
+        <p>Precisely cap your image size with binary search compression</p>
+      </div>
+
+      <div class="content">
+        <div class="upload-section">
+          <div class="upload-area" id="uploadArea">
+            <div class="upload-icon">📁</div>
+            <div class="upload-text">Drop your image here or click to browse</div>
+            <div class="upload-hint">Supports JPEG, PNG, WebP files</div>
+            <input type="file" class="file-input" id="fileInput" accept="image/*" />
+          </div>
+        </div>
+
+        <div class="controls">
+          <div class="control-group">
+            <label for="targetSize">Target Size (KB)</label>
+            <input type="number" id="targetSize" value="500" min="1" max="10000" />
+          </div>
+          <div class="control-group">
+            <label for="outputFormat">Output Format</label>
+            <select id="outputFormat">
+              <option value="">Same as input</option>
+              <option value="image/jpeg">JPEG</option>
+              <option value="image/png">PNG</option>
+              <option value="image/webp">WebP</option>
+              <option value="image/avif">AVIF</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="compress-btn" id="compressBtn" disabled>🚀 Compress Image</button>
+
+        <div class="status" id="status"></div>
+
+        <div class="results" id="results">
+          <h3>Compression Results</h3>
+          <div class="result-item">
+            <span class="result-label">Original Size:</span>
+            <span class="result-value" id="originalSize">-</span>
+          </div>
+          <div class="result-item">
+            <span class="result-label">Compressed Size:</span>
+            <span class="result-value" id="compressedSize">-</span>
+          </div>
+          <div class="result-item">
+            <span class="result-label">Compression Ratio:</span>
+            <span class="result-value" id="compressionRatio">-</span>
+          </div>
+          <div class="result-item">
+            <span class="result-label">Size Reduction:</span>
+            <span class="result-value" id="sizeReduction">-</span>
+          </div>
+
+          <div class="image-preview">
+            <div class="preview-item">
+              <h4>Original</h4>
+              <img id="originalPreview" alt="Original image" />
+            </div>
+            <div class="preview-item">
+              <h4>Compressed</h4>
+              <img id="compressedPreview" alt="Compressed image" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      import imgcap from 'imgcap'
+
+      let selectedFile = null
+      let compressedBlob = null
+
+      // DOM elements
+      const uploadArea = document.getElementById('uploadArea')
+      const fileInput = document.getElementById('fileInput')
+      const targetSizeInput = document.getElementById('targetSize')
+      const outputFormatSelect = document.getElementById('outputFormat')
+      const compressBtn = document.getElementById('compressBtn')
+      const status = document.getElementById('status')
+      const results = document.getElementById('results')
+      const originalSizeSpan = document.getElementById('originalSize')
+      const compressedSizeSpan = document.getElementById('compressedSize')
+      const compressionRatioSpan = document.getElementById('compressionRatio')
+      const sizeReductionSpan = document.getElementById('sizeReduction')
+      const originalPreview = document.getElementById('originalPreview')
+      const compressedPreview = document.getElementById('compressedPreview')
+
+      // File upload handlers
+      uploadArea.addEventListener('click', () => fileInput.click())
+      uploadArea.addEventListener('dragover', handleDragOver)
+      uploadArea.addEventListener('dragleave', handleDragLeave)
+      uploadArea.addEventListener('drop', handleDrop)
+      fileInput.addEventListener('change', handleFileSelect)
+      compressBtn.addEventListener('click', compressImage)
+
+      function handleDragOver(e) {
+        e.preventDefault()
+        uploadArea.classList.add('dragover')
+      }
+
+      function handleDragLeave(e) {
+        e.preventDefault()
+        uploadArea.classList.remove('dragover')
+      }
+
+      function handleDrop(e) {
+        e.preventDefault()
+        uploadArea.classList.remove('dragover')
+        const files = e.dataTransfer.files
+        if (files.length > 0) {
+          handleFile(files[0])
+        }
+      }
+
+      function handleFileSelect(e) {
+        const files = e.target.files
+        if (files.length > 0) {
+          handleFile(files[0])
+        }
+      }
+
+      function handleFile(file) {
+        if (!file.type.startsWith('image/')) {
+          showStatus('Please select a valid image file', 'error')
+          return
+        }
+
+        selectedFile = file
+
+        // Update upload area
+        uploadArea.innerHTML = `
+                <div class="upload-icon">✅</div>
+                <div class="upload-text">${file.name}</div>
+                <div class="upload-hint">${formatFileSize(file.size)} • Click to change</div>
+            `
+
+        // Enable compress button
+        compressBtn.disabled = false
+
+        // Show original preview
+        const originalUrl = URL.createObjectURL(file)
+        originalPreview.src = originalUrl
+        originalPreview.onload = () => URL.revokeObjectURL(originalUrl)
+
+        // Hide previous results
+        results.classList.remove('show')
+        status.classList.remove('show')
+      }
+
+      async function compressImage() {
+        if (!selectedFile) return
+
+        const targetSize = parseInt(targetSizeInput.value) * 1024 // Convert KB to bytes
+        const outputType = outputFormatSelect.value || undefined
+
+        try {
+          showStatus('🔄 Compressing image...', 'loading')
+          compressBtn.disabled = true
+
+          const compressed = await imgcap(selectedFile, {
+            targetSize,
+            outputType
+          })
+
+          compressedBlob = compressed
+          showResults(selectedFile, compressed)
+          showStatus('✅ Compression completed!', 'success')
+        } catch (error) {
+          console.error('Compression failed:', error)
+          showStatus(`❌ Error: ${error.message}`, 'error')
+        } finally {
+          compressBtn.disabled = false
+        }
+      }
+
+      function showResults(original, compressed) {
+        // Update result values
+        originalSizeSpan.textContent = formatFileSize(original.size)
+        compressedSizeSpan.textContent = formatFileSize(compressed.size)
+
+        const ratio = ((1 - compressed.size / original.size) * 100).toFixed(1)
+        compressionRatioSpan.textContent = `${ratio}%`
+
+        const reduction = formatFileSize(original.size - compressed.size)
+        sizeReductionSpan.textContent = `${reduction} saved`
+
+        // Debug info - log actual bytes
+        console.log('🔍 Debug Info:')
+        console.log(
+          `Target size: ${parseInt(targetSizeInput.value)} KB (${parseInt(targetSizeInput.value) * 1024} bytes)`
+        )
+        console.log(`Actual size: ${formatFileSize(compressed.size)} (${compressed.size} bytes)`)
+        console.log(`Difference: ${compressed.size - parseInt(targetSizeInput.value) * 1024} bytes`)
+
+        // Show compressed preview
+        const compressedUrl = URL.createObjectURL(compressed)
+        compressedPreview.src = compressedUrl
+        compressedPreview.onload = () => URL.revokeObjectURL(compressedUrl)
+
+        // Show results section
+        results.classList.add('show')
+      }
+
+      function showStatus(message, type) {
+        status.textContent = message
+        status.className = `status show ${type}`
+      }
+
+      function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes'
+        const k = 1024
+        const sizes = ['Bytes', 'KB', 'MB', 'GB']
+        const i = Math.floor(Math.log(bytes) / Math.log(k))
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+      }
+    </script>
+  </body>
+</html>
