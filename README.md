@@ -12,7 +12,7 @@ pnpm install imgcap
 
 ### Why?
 
-Users often encounter "File too large" errors when uploading images, forcing them to manually compress files using external tools. This creates friction and leads to user dropout. imgcap solves this by automatically compressing images to approximate your target size - no user intervention needed.
+Modern applications should handle image size constraints transparently, creating seamless user interactions. imgcap implements intelligent auto-compression that respects file size limits while maintaining optimal image quality - enabling fluid, friction-free upload experiences that follow good human-computer interaction principles.
 
 **Note**: The `targetSize` represents an ideal target. The actual output size will approximate this value within a reasonable tolerance range for optimal performance.
 
