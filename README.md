@@ -4,6 +4,12 @@
 
 ## Why ImgCap?
 
+[![version](https://img.shields.io/github/v/release/molvqingtai/imgcap)](https://www.npmjs.com/package/imgcap) [![workflow](https://github.com/molvqingtai/imgcap/actions/workflows/ci.yml/badge.svg)](https://github.com/molvqingtai/imgcap/actions) [![download](https://img.shields.io/npm/dt/imgcap)](https://www.npmjs.com/package/imgcap) [![npm package minimized gzipped size](https://img.shields.io/bundlejs/size/imgcap)](https://www.npmjs.com/package/imgcap)
+
+```shell
+pnpm install imgcap
+```
+
 Users often encounter "File too large" errors when uploading images, forcing them to manually compress files using external tools. This creates friction and leads to user dropout. imgcap solves this by automatically compressing images to exact size requirements - no user intervention needed.
 
 ```typescript
@@ -12,12 +18,6 @@ Users often encounter "File too large" errors when uploading images, forcing the
 
 // After: Seamless auto-compression
 ✅ await imgcap(userPhoto, { targetSize: 2 * 1024 * 1024 })
-```
-
-## Installation
-
-```bash
-pnpm install imgcap
 ```
 
 ## Usage
