@@ -26,11 +26,7 @@ Users often encounter "File too large" errors when uploading images, forcing the
 ✅ await imgcap(userPhoto, { targetSize: 2 * 1024 * 1024 })
 ```
 
-<<<<<<< HEAD
-## Usage
-=======
 ### Usage
->>>>>>> develop
 
 ```typescript
 import imgcap from 'imgcap'
