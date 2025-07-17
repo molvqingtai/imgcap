@@ -52,7 +52,7 @@ const compress = async (
   const tolerance = Math.min(Math.max(1024, targetSize * 0.01), 1024 * 1024)
   if (Math.abs(currentSize - targetSize) <= tolerance) {
     // Return the result that's closest to target size
-    return Math.abs(currentSize - targetSize) <= Math.abs(bestBlob.size - targetSize) ? outputBlob : bestBlob
+    return bestBlob
   }
 
   if (currentSize > targetSize) {
