@@ -1,3 +1,15 @@
+# [1.1.0](https://github.com/molvqingtai/imgcap/compare/v1.0.2...v1.1.0) (2026-01-29)
+
+
+### Bug Fixes
+
+* pin dependabot action version and clean up formatting ([0a942e3](https://github.com/molvqingtai/imgcap/commit/0a942e3f279fd950c4001727f9929cdcde1160c9))
+
+
+### Features
+
+* add dependabot auto-merge workflow ([dd1db87](https://github.com/molvqingtai/imgcap/commit/dd1db87ee0c014851986e9797723662a0f43b1ab))
+
 ## [1.0.2](https://github.com/molvqingtai/imgcap/compare/v1.0.1...v1.0.2) (2025-07-14)
 
 
