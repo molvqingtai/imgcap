@@ -713,6 +713,8 @@ kbd {
 }
 
 .item {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 58px;
   position: relative;
   display: flex;
   align-items: center;
@@ -1413,9 +1415,9 @@ body.is-dragging .dragveil {
     padding: 10px;
   }
 
-  .status__totals {
-    flex-wrap: wrap;
-    row-gap: 4px;
+  .status__totals .arrow,
+  .status__totals .total-out {
+    display: none;
   }
 
   .status__actions {
@@ -1433,6 +1435,7 @@ body.is-dragging .dragveil {
   }
 
   .item {
+    contain-intrinsic-size: auto 56px;
     height: 56px;
     padding-left: 8px;
   }

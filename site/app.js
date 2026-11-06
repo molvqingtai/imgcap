@@ -594,7 +594,7 @@ function chrome() {
     el.totals.append(
       textSpan(formatBytes(totalIn)),
       textSpan('→', 'arrow'),
-      textSpan(formatBytes(totalOut)),
+      textSpan(formatBytes(totalOut), 'total-out'),
       textSpan(`· ${saved}% smaller`, 'saved')
     )
   } else if (done.length) {
