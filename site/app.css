@@ -77,6 +77,10 @@
 html,
 body {
   margin: 0;
+  /* The shell is viewport sized, so a downward drag on the page is always an
+     overscroll — let it end there instead of reaching the browser's pull to
+     refresh and reloading a queue the user has not saved yet. */
+  overscroll-behavior-y: none;
 }
 
 html {
@@ -680,6 +684,7 @@ kbd {
   margin: 0;
   padding: 0;
   overflow-y: auto;
+  overscroll-behavior: contain;
   list-style: none;
   scrollbar-width: thin;
   scrollbar-color: var(--line-2) transparent;
