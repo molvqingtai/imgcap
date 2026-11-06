@@ -221,7 +221,10 @@ kbd {
 
 .btn:disabled {
   cursor: not-allowed;
-  opacity: 0.45;
+  border-color: var(--line);
+  background: var(--surface-3);
+  color: var(--muted);
+  opacity: 1;
 }
 
 .btn .icon {
@@ -240,13 +243,6 @@ kbd {
   border-color: #232925;
 }
 
-.btn--ink:disabled {
-  border-color: var(--line);
-  background: var(--surface-3);
-  color: var(--muted);
-  opacity: 1;
-}
-
 .btn--lime {
   border-color: var(--lime-2);
   background: var(--lime);
@@ -255,13 +251,6 @@ kbd {
 
 .btn--lime:hover {
   background: var(--lime-2);
-}
-
-.btn--lime:disabled {
-  border-color: var(--line);
-  background: var(--surface-3);
-  color: var(--muted);
-  opacity: 1;
 }
 
 /* secondary but visible: sits next to the black primary without competing */
