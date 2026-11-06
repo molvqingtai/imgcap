@@ -666,13 +666,16 @@ function chrome() {
   const totalOut = done.reduce((sum, item) => sum + item.result.blob.size, 0)
 
   el.totals.replaceChildren()
-  if (done.length && totalIn > totalOut) {
-    const saved = Math.round(((totalIn - totalOut) / totalIn) * 100)
+  if (done.length && totalIn !== totalOut) {
+    // A few re-encodes end up heavier than the file they replaced; the
+    // totals have to say so instead of claiming a saving.
+    const diff = totalIn - totalOut
+    const percent = Math.round((Math.abs(diff) / totalIn) * 100)
     el.totals.append(
       textSpan(formatBytes(totalIn)),
       textSpan('→', 'arrow'),
       textSpan(formatBytes(totalOut), 'total-out'),
-      textSpan(`· ${saved}% smaller`, 'saved')
+      diff > 0 ? textSpan(`· −${percent}%`, 'saved') : textSpan(`· +${percent}%`, 'larger')
     )
   } else if (done.length) {
     el.totals.append(textSpan(formatBytes(totalIn)), textSpan('· already within target', 'saved'))
@@ -736,7 +739,15 @@ function compareStats(item) {
 
   add('Original', formatBytes(item.size))
   add('Output', formatBytes(out))
-  add('Saved', percent > 0 ? `${formatBytes(saved)} · ${percent}%` : 'none', percent > 0 ? 'accent' : 'warn')
+  add(
+    'Saved',
+    percent > 0
+      ? `−${formatBytes(saved)} · −${percent}%`
+      : saved < 0
+        ? `+${formatBytes(-saved)} · +${Math.abs(percent)}%`
+        : 'none',
+    percent > 0 ? 'good' : 'warn'
+  )
   add(resized ? 'Dimensions' : 'Resolution', `${result.width}×${result.height}`)
   add(
     'Format',

@@ -1010,6 +1010,14 @@ kbd {
   font-weight: 500;
 }
 
+.status__totals .larger {
+  padding: 2px 5px;
+  border-radius: 4px;
+  background: var(--danger-soft);
+  color: var(--danger);
+  font-weight: 500;
+}
+
 .status__totals .failed {
   color: var(--danger);
 }
