@@ -264,13 +264,14 @@ kbd {
   opacity: 1;
 }
 
-.btn--quiet {
-  border-color: transparent;
-  background: transparent;
-  color: var(--muted);
+/* secondary but visible: sits next to the black primary without competing */
+.btn--soft {
+  border-color: var(--line-2);
+  background: var(--surface);
+  color: var(--ink-2);
 }
 
-.btn--quiet:hover {
+.btn--soft:hover {
   background: var(--surface-3);
   color: var(--ink);
 }
@@ -1475,7 +1476,7 @@ body.is-dragging .dragveil {
     justify-content: center;
   }
 
-  .status__actions .btn--quiet {
+  .status__actions .btn--icon {
     flex: 0 0 auto;
   }
 
