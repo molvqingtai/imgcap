@@ -876,6 +876,10 @@ function bindBar() {
   sync()
 }
 
+function registerWorker() {
+  navigator.serviceWorker.register('sw.js').catch(() => {})
+}
+
 function boot() {
   harmonizeShortcuts()
   syncSettingsUI()
@@ -884,6 +888,7 @@ function boot() {
   bindCompare()
   bindBar()
   chrome()
+  registerWorker()
 }
 
 boot()
