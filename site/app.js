@@ -180,8 +180,10 @@ function syncPresets() {
     const kb = Number(chip.dataset.kb)
     chip.setAttribute('aria-pressed', bytes === kb * 1024 ? 'true' : 'false')
   }
-  const match = [...el.presetSelect.options].find((option) => Number(option.value) * 1024 === bytes)
-  el.presetSelect.selectedIndex = match ? match.index : -1
+  const match = [...el.presetSelect.options].find(
+    (option) => option.value && Number(option.value) * 1024 === bytes
+  )
+  el.presetSelect.value = match ? match.value : ''
 }
 
 function markStale() {
@@ -754,7 +756,10 @@ function bindSettings() {
   })
 
   el.presetSelect.addEventListener('change', () => {
-    if (!el.presetSelect.value) return
+    if (!el.presetSelect.value) {
+      syncPresets()
+      return
+    }
     applyPreset(Number(el.presetSelect.value))
   })
 
