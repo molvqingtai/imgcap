@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ImgCap — image compressor</title>
+    <meta
+      name="description"
+      content="Compress JPG, PNG, WebP and AVIF images to a target file size. Runs entirely in your browser."
+    />
+    <meta name="theme-color" content="#f4f6f2" />
+    <meta name="color-scheme" content="light" />
+    <link rel="canonical" href="https://molvqingtai.github.io/imgcap/" />
+    <link rel="icon" href="./site/favicon.svg" type="image/svg+xml" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="ImgCap — image compressor" />
+    <meta
+      property="og:description"
+      content="Set a target file size and get images that fit. Nothing is uploaded."
+    />
+    <meta property="og:url" content="https://molvqingtai.github.io/imgcap/" />
+    <meta property="og:image" content="https://molvqingtai.github.io/imgcap/site/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://molvqingtai.github.io/imgcap/site/og.png" />
+
+    <link rel="preload" href="./site/fonts/inter.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="./site/fonts/mono.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="./site/app.css" />
+  </head>
+  <body>
+    <a class="skip" href="#drop">Skip to the file picker</a>
+
+    <svg class="sprite" aria-hidden="true" focusable="false">
+      <symbol id="i-mark" viewBox="0 0 24 24">
+        <path d="M9 3.5H5A1.5 1.5 0 0 0 3.5 5v4" />
+        <path d="M15 3.5h4A1.5 1.5 0 0 1 20.5 5v4" />
+        <path d="M20.5 15v4a1.5 1.5 0 0 1-1.5 1.5h-4" />
+        <path d="M9 20.5H5A1.5 1.5 0 0 1 3.5 19v-4" />
+        <rect x="10" y="10" width="4" height="4" rx="1" fill="currentColor" stroke="none" />
+      </symbol>
+      <symbol id="i-image" viewBox="0 0 24 24">
+        <rect x="3" y="4" width="18" height="16" rx="3" />
+        <circle cx="8.5" cy="9.5" r="1.6" />
+        <path d="M3.5 17l4.6-4.6a1.5 1.5 0 0 1 2.1 0l3.1 3.1" />
+        <path d="M12.5 14.5l2.2-2.2a1.5 1.5 0 0 1 2.1 0l3.7 3.7" />
+      </symbol>
+      <symbol id="i-download" viewBox="0 0 24 24">
+        <path d="M12 3v11" />
+        <path d="M7.5 9.5L12 14l4.5-4.5" />
+        <path d="M4.5 16.5v2A2.5 2.5 0 0 0 7 21h10a2.5 2.5 0 0 0 2.5-2.5v-2" />
+      </symbol>
+      <symbol id="i-close" viewBox="0 0 24 24">
+        <path d="M6 6l12 12M18 6L6 18" />
+      </symbol>
+      <symbol id="i-github" viewBox="0 0 16 16">
+        <path
+          fill="currentColor"
+          stroke="none"
+          fill-rule="evenodd"
+          d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"
+        />
+      </symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24">
+        <path d="M12 5v14M5 12h14" />
+      </symbol>
+      <symbol id="i-refresh" viewBox="0 0 24 24">
+        <path d="M20 12a8 8 0 1 1-2.6-5.9" />
+        <path d="M20 4v4.5h-4.5" />
+      </symbol>
+      <symbol id="i-reset" viewBox="0 0 24 24">
+        <path d="M4 12a8 8 0 1 0 2.6-5.9" />
+        <path d="M4 4v4.5h4.5" />
+      </symbol>
+      <symbol id="i-lock" viewBox="0 0 24 24">
+        <rect x="4.5" y="10" width="15" height="10.5" rx="2.5" />
+        <path d="M8 10V7.5a4 4 0 0 1 8 0V10" />
+        <path d="M12 14.5v2" />
+      </symbol>
+    </svg>
+
+    <header class="bar">
+      <a class="brand" href="./" aria-label="ImgCap">
+        <span class="brand__mark"><svg><use href="#i-mark" /></svg></span>
+        <span class="brand__word">ImgCap</span>
+      </a>
+      <span class="bar__rule" aria-hidden="true"></span>
+      <span class="bar__note">Image compressor</span>
+
+      <div class="bar__end">
+        <span class="bar__privacy">
+          <svg aria-hidden="true"><use href="#i-lock" /></svg>
+          Local only
+        </span>
+        <a
+          class="iconbtn"
+          href="https://github.com/molvqingtai/imgcap"
+          target="_blank"
+          rel="noreferrer"
+          aria-label="Source on GitHub"
+        >
+          <svg aria-hidden="true"><use href="#i-github" /></svg>
+        </a>
+      </div>
+    </header>
+
+    <section class="settings" aria-label="Compression settings">
+      <div class="setting">
+        <label class="setting__label" for="target">Target size</label>
+        <div class="target">
+          <input
+            class="target__input"
+            id="target"
+            type="number"
+            inputmode="decimal"
+            min="1"
+            max="500000"
+            step="any"
+            value="500"
+          />
+          <label class="visually-hidden" for="unit">Unit</label>
+          <select class="target__unit" id="unit">
+            <option value="KB">KB</option>
+            <option value="MB">MB</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="setting setting--presets">
+        <span class="setting__label" id="presetsLabel">Presets</span>
+        <div class="chips" id="presets" role="group" aria-labelledby="presetsLabel">
+          <button class="chip" type="button" data-kb="100">100</button>
+          <button class="chip" type="button" data-kb="250">250</button>
+          <button class="chip" type="button" data-kb="500">500</button>
+          <button class="chip" type="button" data-kb="1024">1 MB</button>
+          <button class="chip" type="button" data-kb="2048">2 MB</button>
+        </div>
+      </div>
+
+      <div class="setting">
+        <label class="setting__label" for="format">Format</label>
+        <div class="select">
+          <select id="format">
+            <option value="keep">Auto</option>
+            <option value="image/webp">WebP</option>
+            <option value="image/jpeg">JPG</option>
+            <option value="image/png">PNG</option>
+            <option value="image/avif">AVIF</option>
+          </select>
+          <svg class="select__chevron" aria-hidden="true" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5" /></svg>
+        </div>
+      </div>
+
+      <button
+        class="iconbtn iconbtn--reset"
+        id="resetBtn"
+        type="button"
+        aria-label="Reset settings"
+        title="Reset settings"
+      >
+        <svg aria-hidden="true"><use href="#i-reset" /></svg>
+      </button>
+
+      <div class="settings__end">
+        <button class="btn btn--ink" id="addBtn" type="button">
+          <svg class="icon" aria-hidden="true"><use href="#i-plus" /></svg>
+          <span>Add images</span>
+        </button>
+      </div>
+    </section>
+
+    <main class="app">
+      <input id="fileInput" class="visually-hidden" type="file" accept="image/*" multiple tabindex="-1" />
+
+      <section class="queue" id="queue" data-empty="true" aria-label="Queue">
+        <div
+          class="drop"
+          id="drop"
+          role="button"
+          tabindex="0"
+          aria-label="Add images. Drop files, browse, or paste from the clipboard."
+        >
+          <div class="drop__inner">
+            <span class="drop__icon" aria-hidden="true"><svg><use href="#i-image" /></svg></span>
+            <p class="drop__title">Drop images here</p>
+            <p class="drop__sub">
+              <span class="linkbtn">Browse files</span><span class="sep" aria-hidden="true">/</span>paste with
+              <kbd>⌘</kbd><kbd>V</kbd>
+            </p>
+            <p class="drop__formats">JPG · PNG · WebP · AVIF <span>· up to 80 files</span></p>
+          </div>
+        </div>
+
+        <ul class="list" id="list"></ul>
+
+        <div class="status">
+          <div class="status__summary" id="summary" aria-live="polite">
+            <span class="status__count" id="count"></span>
+            <span class="status__totals" id="totals"></span>
+          </div>
+          <div class="status__actions">
+            <button class="btn btn--lime" id="applyBtn" type="button" hidden>
+              <svg class="icon" aria-hidden="true"><use href="#i-refresh" /></svg>
+              <span id="applyLabel">Re-apply</span>
+            </button>
+            <button class="btn btn--ink" id="zipBtn" type="button" disabled>
+              <svg class="icon" aria-hidden="true"><use href="#i-download" /></svg>
+              <span id="zipLabel">Download all</span>
+            </button>
+            <button class="btn btn--quiet" id="clearBtn" type="button">Clear</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <dialog class="modal" id="compareDlg" aria-labelledby="cmpName">
+      <div class="modal__head">
+        <div class="modal__title">
+          <h2 id="cmpName">image.jpg</h2>
+          <p class="modal__sub">Drag the divider to compare</p>
+        </div>
+        <button class="iconbtn" type="button" data-close aria-label="Close">
+          <svg aria-hidden="true"><use href="#i-close" /></svg>
+        </button>
+      </div>
+
+      <div class="cmp" id="cmpStage">
+        <img class="cmp__img" id="cmpA" alt="Original" />
+        <img class="cmp__img cmp__img--out" id="cmpB" alt="Compressed" />
+        <span class="cmp__tag cmp__tag--a">Original</span>
+        <span class="cmp__tag cmp__tag--b">Compressed</span>
+        <div class="cmp__line" aria-hidden="true"><span class="cmp__handle"></span></div>
+        <input
+          class="cmp__range"
+          id="cmpRange"
+          type="range"
+          min="0"
+          max="100"
+          value="50"
+          aria-label="Reveal compressed image"
+        />
+      </div>
+
+      <dl class="stats" id="cmpStats"></dl>
+
+      <div class="modal__foot">
+        <button class="btn btn--ink" id="cmpDownload" type="button">
+          <svg class="icon" aria-hidden="true"><use href="#i-download" /></svg>
+          <span>Download</span>
+        </button>
+      </div>
+    </dialog>
+
+    <template id="rowTpl">
+      <li class="item" data-state="queued">
+        <button class="item__hit" type="button">
+          <span class="item__thumb"><img alt="" loading="lazy" /></span>
+          <span class="item__body">
+            <span class="item__name"></span>
+            <span class="item__meta"></span>
+          </span>
+          <span class="item__status" data-state="queued">Queued</span>
+          <span class="item__numbers">
+            <span class="item__from"></span>
+            <span class="item__arrow" aria-hidden="true">→</span>
+            <span class="item__to"></span>
+            <span class="item__delta"></span>
+          </span>
+        </button>
+        <span class="item__actions">
+          <button class="iconbtn iconbtn--sm" type="button" data-act="download" aria-label="Download" hidden>
+            <svg aria-hidden="true"><use href="#i-download" /></svg>
+          </button>
+          <button class="iconbtn iconbtn--sm" type="button" data-act="retry" aria-label="Try again" hidden>
+            <svg aria-hidden="true"><use href="#i-refresh" /></svg>
+          </button>
+          <button class="iconbtn iconbtn--sm" type="button" data-act="remove" aria-label="Remove">
+            <svg aria-hidden="true"><use href="#i-close" /></svg>
+          </button>
+        </span>
+        <span class="item__bar" aria-hidden="true"><span></span></span>
+      </li>
+    </template>
+
+    <div class="toasts" id="toasts" aria-live="polite" aria-atomic="false"></div>
+
+    <div class="dragveil" aria-hidden="true">
+      <div class="dragveil__box">
+        <svg><use href="#i-image" /></svg>
+        <p>Drop to compress</p>
+        <span>JPG · PNG · WebP · AVIF</span>
+      </div>
+    </div>
+
+    <noscript>
+      <p class="noscript">ImgCap needs JavaScript to compress images on your device.</p>
+    </noscript>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "ImgCap",
+        "url": "https://molvqingtai.github.io/imgcap/",
+        "applicationCategory": "MultimediaApplication",
+        "operatingSystem": "Any (browser)",
+        "description": "Compress JPG, PNG, WebP and AVIF images to a target file size entirely in the browser. Nothing is uploaded.",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "license": "https://opensource.org/licenses/MIT"
+      }
+    </script>
+    <script type="module" src="./site/app.js"></script>
+  </body>
+</html>

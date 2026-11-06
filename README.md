@@ -8,11 +8,39 @@ Automatically compress images to approximate target file size using binary searc
 $ pnpm install imgcap
 ```
 
-**[View Demo](https://molvqingtai.github.io/imgcap/demo.html)**
+**[Open the compressor](https://molvqingtai.github.io/imgcap/)** — drop images, pick a target size, download. Runs entirely in your browser.
+
+### Web app
+
+The site is the tool itself, not a landing page: one screen with a target size,
+a format switch and the queue. There is no quality slider — `imgcap` takes a byte
+budget and searches for the closest fit, so the target is the only thing to set.
+Batch queue, before/after compare and ZIP download are included.
+
+It is a static page with no build step — compression runs in a Web Worker via
+[comctx](https://github.com/molvqingtai/comctx), using the published `imgcap`
+build from `site/vendor`.
+
+```shell
+$ pnpm serve      # preview http://localhost:3000
+```
+
+```
+index.html         the tool
+site/app.js        queue, settings, downloads
+site/worker.js     worker entry, exposes compress() over comctx
+site/engine.js     decode + imgcap call + result metadata
+site/zip.js        dependency-free ZIP writer (store method)
+site/app.css       styles
+site/vendor/       pinned imgcap + comctx ESM builds
+```
+
+No upload, no analytics, no third-party requests: fonts are self-hosted and
+every byte of your image is processed in the tab that opened it.
 
 ### Why?
 
-Modern applications should handle image size constraints transparently, creating seamless user interactions. imgcap implements intelligent auto-compression that respects file size limits while maintaining optimal image quality - enabling fluid, friction-free upload experiences that follow good human-computer interaction principles.
+Modern applications should handle image size constraints transparently, creating seamless user interactions. ImgCap implements intelligent auto-compression that respects file size limits while maintaining optimal image quality - enabling fluid, friction-free upload experiences that follow good human-computer interaction principles.
 
 **Note**: The `targetSize` represents an ideal target. The actual output size will approximate this value within a reasonable tolerance range for optimal performance.
 
