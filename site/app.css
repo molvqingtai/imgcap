@@ -1374,8 +1374,9 @@ body.is-dragging .dragveil {
     padding: 10px;
   }
 
-  .setting--presets {
-    order: 3;
+  .setting--presets,
+  .iconbtn--reset {
+    display: none;
   }
 
   .settings__end {
@@ -1476,10 +1477,6 @@ body.is-dragging .dragveil {
 
   .setting__label {
     font-size: 10px;
-  }
-
-  .setting--presets {
-    width: 100%;
   }
 
   .settings__end {
