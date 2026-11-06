@@ -91,7 +91,10 @@ html {
 body {
   display: grid;
   grid-template-rows: auto auto minmax(0, 1fr) auto;
+  /* The smallest viewport, so a browser that keeps its toolbars on screen
+     never paints them over the status bar or the footer. */
   height: 100dvh;
+  height: 100svh;
   background: var(--canvas);
   color: var(--ink);
   font-family: var(--sans);
@@ -331,8 +334,8 @@ kbd {
   display: flex;
   align-items: center;
   gap: 12px;
-  height: var(--bar-h);
-  padding: 0 16px;
+  height: calc(var(--bar-h) + env(safe-area-inset-top));
+  padding: env(safe-area-inset-top) 16px 0;
   background: var(--surface);
 }
 
@@ -1016,7 +1019,7 @@ kbd {
 
 .modal {
   width: min(880px, calc(100vw - 32px));
-  max-height: calc(100dvh - 40px);
+  max-height: calc(100svh - 40px);
   padding: 0;
   border: 1px solid var(--line);
   border-radius: 16px;
@@ -1080,7 +1083,7 @@ kbd {
   --pos: 50%;
   position: relative;
   flex: 0 1 auto;
-  height: clamp(220px, 52vh, 460px);
+  height: clamp(220px, 52svh, 460px);
   background: repeating-conic-gradient(#f2f5ec 0% 25%, #fdfefb 0% 50%) 50% / 14px 14px;
   overflow: hidden;
   touch-action: none;
@@ -1343,6 +1346,7 @@ body.is-dragging .dragveil {
 
   .foot {
     padding: 0 0 8px;
+    padding-bottom: calc(8px + env(safe-area-inset-bottom));
   }
 
   .settings,
@@ -1444,7 +1448,7 @@ body.is-dragging .dragveil {
 
   .modal {
     width: calc(100vw - 16px);
-    max-height: calc(100dvh - 16px);
+    max-height: calc(100svh - 16px);
   }
 
   .modal__head,
@@ -1459,7 +1463,7 @@ body.is-dragging .dragveil {
 
   .cmp {
     min-height: 200px;
-    max-height: 46vh;
+    max-height: 46svh;
   }
 }
 
