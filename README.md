@@ -8,7 +8,7 @@ Automatically compress images to approximate target file size using binary searc
 $ pnpm install imgcap
 ```
 
-**[Open the compressor](https://molvqingtai.github.io/imgcap/)** — drop images, pick a target size, download. Runs entirely in your browser.
+**[Open the compressor](https://imgcap.vercel.app/)** — drop images, pick a target size, download. Runs entirely in your browser. Also served from [GitHub Pages](https://molvqingtai.github.io/imgcap/).
 
 ### Web app
 
@@ -34,6 +34,10 @@ site/zip.js        dependency-free ZIP writer (store method)
 site/app.css       styles
 site/vendor/       pinned imgcap + comctx ESM builds
 ```
+
+Pushes to `master` deploy to Vercel and GitHub Pages; pushes to `develop` only
+create a Vercel preview. `vercel.json` publishes `index.html`, `demo.html` and
+`site/` alone, so the library at the repository root never reaches the deploy.
 
 No upload, no analytics, no third-party requests: fonts are self-hosted and
 every byte of your image is processed in the tab that opened it.
