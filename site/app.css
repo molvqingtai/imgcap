@@ -1430,6 +1430,18 @@ body.is-dragging .dragveil {
     display: none;
   }
 
+  /* The summary moves the totals onto their own line instead of letting the
+     sentence run out of the bar: long wording used to be clipped mid word. */
+  .status__summary {
+    flex: 1 1 100%;
+    flex-wrap: wrap;
+    row-gap: 2px;
+  }
+
+  .status__totals {
+    flex: 0 0 auto;
+  }
+
   .status__actions {
     width: 100%;
     margin-left: 0;
