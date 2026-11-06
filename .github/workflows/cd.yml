@@ -8,6 +8,7 @@ on:
 jobs:
   setup:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     outputs:
       cache-hit: ${{ steps.pnpm-cache.outputs.cache-hit }}
     steps:
@@ -31,6 +32,7 @@ jobs:
   linter:
     needs: [setup]
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -41,14 +43,18 @@ jobs:
           version: latest
       - name: Restore dependencies
         if: needs.setup.outputs.cache-hit != 'true'
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --ignore-scripts
+        timeout-minutes: 10
       - run: pnpm run build
+        timeout-minutes: 10
       - run: pnpm run lint
+        timeout-minutes: 10
       - run: pnpm run check
 
   tests:
     needs: [setup]
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -59,12 +65,24 @@ jobs:
           version: latest
       - name: Restore dependencies
         if: needs.setup.outputs.cache-hit != 'true'
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --ignore-scripts
+        timeout-minutes: 10
+      - name: Cache Chromium
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('pnpm-lock.yaml') }}
+      - name: Install Chromium
+        run: pnpm --filter __tests__ exec playwright install --with-deps chromium
+        timeout-minutes: 15
       - run: pnpm run build
+        timeout-minutes: 10
       - run: pnpm run test
+        timeout-minutes: 20
   release:
     needs: [setup, linter, tests]
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
         with:
