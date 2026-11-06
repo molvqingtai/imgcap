@@ -10,16 +10,6 @@ $ pnpm install imgcap
 
 **[Open the compressor](https://imgcap.vercel.app/)**
 
-### Web app
-
-Static page, no build step: compression runs in a Web Worker through
-[comctx](https://github.com/molvqingtai/comctx), using the published `imgcap`
-build in `site/vendor`.
-
-```shell
-$ pnpm serve      # preview http://localhost:3000
-```
-
 ### Why?
 
 Modern applications should handle image size constraints transparently, creating seamless user interactions. ImgCap implements intelligent auto-compression that respects file size limits while maintaining optimal image quality - enabling fluid, friction-free upload experiences that follow good human-computer interaction principles.
