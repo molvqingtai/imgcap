@@ -332,7 +332,7 @@ kbd {
   align-items: center;
   gap: 12px;
   height: var(--bar-h);
-  padding: 0 max(16px, calc((100% - var(--shell)) / 2));
+  padding: 0 16px;
   background: var(--surface);
 }
 
@@ -1481,7 +1481,11 @@ body.is-dragging .dragveil {
 
   .settings__end {
     width: 100%;
-    justify-content: flex-end;
+  }
+
+  .settings__end .btn {
+    flex: 1;
+    justify-content: center;
   }
 
   .item__meta .meta-from {
