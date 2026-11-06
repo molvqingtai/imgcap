@@ -211,11 +211,11 @@ kbd {
     transform 0.14s ease;
 }
 
-.btn:hover {
+.btn:hover:not(:disabled) {
   background: var(--surface-3);
 }
 
-.btn:active {
+.btn:active:not(:disabled) {
   transform: translateY(1px);
 }
 
@@ -238,7 +238,7 @@ kbd {
   color: #fff;
 }
 
-.btn--ink:hover {
+.btn--ink:hover:not(:disabled) {
   background: #232925;
   border-color: #232925;
 }
@@ -249,7 +249,7 @@ kbd {
   color: var(--lime-ink);
 }
 
-.btn--lime:hover {
+.btn--lime:hover:not(:disabled) {
   background: var(--lime-2);
 }
 
@@ -260,7 +260,7 @@ kbd {
   color: var(--ink-2);
 }
 
-.btn--soft:hover {
+.btn--soft:hover:not(:disabled) {
   background: var(--surface-3);
   color: var(--ink);
 }
@@ -298,7 +298,7 @@ kbd {
   height: 17px;
 }
 
-.iconbtn:hover {
+.iconbtn:hover:not(:disabled) {
   background: var(--surface-3);
   color: var(--ink);
 }
