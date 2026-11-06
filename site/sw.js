@@ -6,24 +6,24 @@
  * network does not.
  */
 
-const CACHE = 'imgcap-v1'
+const CACHE = 'imgcap-v2'
 
 const SHELL = [
   './',
   'manifest.webmanifest',
-  'site/app.css',
-  'site/app.js',
-  'site/engine.js',
-  'site/worker.js',
-  'site/zip.js',
-  'site/vendor/comctx.js',
-  'site/vendor/imgcap.js',
-  'site/fonts/inter.woff2',
-  'site/fonts/mono.woff2',
-  'site/favicon.svg',
-  'site/icon-192.png',
-  'site/icon-512.png',
-  'site/icon-maskable-512.png'
+  './app.css',
+  './app.js',
+  './engine.js',
+  './worker.js',
+  './zip.js',
+  './vendor/comctx.js',
+  './vendor/imgcap.js',
+  './fonts/inter.woff2',
+  './fonts/mono.woff2',
+  './favicon.svg',
+  './icon-192.png',
+  './icon-512.png',
+  './icon-maskable-512.png'
 ]
 
 self.addEventListener('install', (event) => {
