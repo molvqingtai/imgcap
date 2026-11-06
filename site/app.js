@@ -659,10 +659,15 @@ function chrome() {
   const working = state.items.filter((item) => item.state === 'working').length
   const failed = state.items.filter((item) => item.state === 'error').length
 
-  el.count.textContent =
-    done.length === items
-      ? `${items} image${items > 1 ? 's' : ''} · ${done.length} compressed`
-      : `${done.length}/${items} compressed${working ? ` · ${working} running` : ''}${failed ? ` · ${failed} failed` : ''}`
+  // "compressed" is the word that gives way first when the bar is narrow;
+  // the running and failed counts stay.
+  const complete = done.length === items
+  const counts = `${working ? ` · ${working} running` : ''}${failed ? ` · ${failed} failed` : ''}`
+  el.count.replaceChildren(
+    textSpan(complete ? `${items} image${items > 1 ? 's' : ''}` : `${done.length}/${items}`),
+    textSpan(complete ? ` · ${done.length} compressed` : ' compressed', 'count__word'),
+    textSpan(counts)
+  )
 
   const totalIn = done.reduce((sum, item) => sum + item.size, 0)
   const totalOut = done.reduce((sum, item) => sum + item.result.blob.size, 0)
@@ -680,7 +685,7 @@ function chrome() {
       diff > 0 ? textSpan(`· −${percent}%`, 'saved') : textSpan(`· +${percent}%`, 'larger')
     )
   } else if (done.length) {
-    el.totals.append(textSpan(formatBytes(totalIn)), textSpan('· already within target', 'saved'))
+    el.totals.append(textSpan(formatBytes(totalIn)), textSpan('· within target', 'saved'))
   } else if (failed === items) {
     el.totals.append(textSpan(`${failed} could not be read`, 'failed'))
   } else {

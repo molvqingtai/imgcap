@@ -92,6 +92,8 @@ body {
   /* keeps a double tap from zooming the app on touch screens */
   touch-action: manipulation;
   display: grid;
+  /* minmax(0, ...) keeps one long line from widening the whole page. */
+  grid-template-columns: minmax(0, 1fr);
   grid-template-rows: auto auto minmax(0, 1fr) auto;
   /* The smallest viewport, so a browser that keeps its toolbars on screen
      never paints them over the status bar or the footer. */
@@ -1442,12 +1444,21 @@ body.is-dragging .dragveil {
     display: none;
   }
 
-  /* The summary moves the totals onto their own line instead of letting the
-     sentence run out of the bar: long wording used to be clipped mid word. */
+  /* One line only: the numbers keep their space and the running count gives
+     way first. */
   .status__summary {
     flex: 1 1 100%;
-    flex-wrap: wrap;
-    row-gap: 2px;
+    flex-wrap: nowrap;
+  }
+
+  .status__count {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .status__count .count__word {
+    display: none;
   }
 
   .status__totals {
