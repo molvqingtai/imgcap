@@ -83,7 +83,9 @@ const [, inject] = defineProxy(
   {
     namespace: NAMESPACE,
     heartbeatInterval: 250,
-    heartbeatTimeout: 15000,
+    /* A multi-megapixel encode blocks the worker's event loop, so the ping
+       can go unanswered for far longer than a network timeout would allow. */
+    heartbeatTimeout: 10 * 60 * 1000,
     transfer: true
   }
 )
