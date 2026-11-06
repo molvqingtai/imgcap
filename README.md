@@ -8,39 +8,17 @@ Automatically compress images to approximate target file size using binary searc
 $ pnpm install imgcap
 ```
 
-**[Open the compressor](https://imgcap.vercel.app/)** — drop images, pick a target size, download. Runs entirely in your browser.
+**[Open the compressor](https://imgcap.vercel.app/)**
 
 ### Web app
 
-The site is the tool itself, not a landing page: one screen with a target size,
-a format switch and the queue. There is no quality slider — `imgcap` takes a byte
-budget and searches for the closest fit, so the target is the only thing to set.
-Batch queue, before/after compare and ZIP download are included.
-
-It is a static page with no build step — compression runs in a Web Worker via
+Static page, no build step: compression runs in a Web Worker through
 [comctx](https://github.com/molvqingtai/comctx), using the published `imgcap`
-build from `site/vendor`.
+build in `site/vendor`.
 
 ```shell
 $ pnpm serve      # preview http://localhost:3000
 ```
-
-```
-index.html         the tool
-site/app.js        queue, settings, downloads
-site/worker.js     worker entry, exposes compress() over comctx
-site/engine.js     decode + imgcap call + result metadata
-site/zip.js        dependency-free ZIP writer (store method)
-site/app.css       styles
-site/vendor/       pinned imgcap + comctx ESM builds
-```
-
-Pushes to `master` deploy to Vercel and GitHub Pages; pushes to `develop` only
-create a Vercel preview. `vercel.json` publishes `index.html` and `site/` alone,
-so the library at the repository root never reaches the deploy.
-
-No upload, no analytics, no third-party requests: fonts are self-hosted and
-every byte of your image is processed in the tab that opened it.
 
 ### Why?
 
