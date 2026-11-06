@@ -1,0 +1,7 @@
+node_modules
+__tests__
+core
+.github
+.husky
+tmp-fixtures
+public

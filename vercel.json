@@ -1,0 +1,7 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "installCommand": "echo 'static site: nothing to install'",
+  "buildCommand": "mkdir -p public && cp index.html demo.html public/ && cp -r site public/",
+  "outputDirectory": "public",
+  "cleanUrls": true
+}
