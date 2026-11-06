@@ -867,12 +867,22 @@ function harmonizeShortcuts() {
   }
 }
 
+function bindBar() {
+  const bar = $('.bar')
+
+  const sync = () => bar.toggleAttribute('data-stuck', window.scrollY > 0)
+
+  window.addEventListener('scroll', sync, { passive: true })
+  sync()
+}
+
 function boot() {
   harmonizeShortcuts()
   syncSettingsUI()
   bindSettings()
   bindFiles()
   bindCompare()
+  bindBar()
   chrome()
 }
 
