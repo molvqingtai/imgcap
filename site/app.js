@@ -238,7 +238,7 @@ function addFiles(fileList) {
       resultSignature: '',
       error: '',
       stale: false,
-      thumbUrl: SUPPORTED_TYPES.includes(type) ? URL.createObjectURL(file) : '',
+      thumbUrl: '',
       outUrl: '',
       el: null,
       removed: false
@@ -272,22 +272,76 @@ function addFiles(fileList) {
     for (const item of appended) appendRow(item)
     chrome()
   })
+
+  for (const item of appended) makeThumb(item)
   pump()
 }
+
+/* Row names are only handed out while a transition runs: a named element is
+   isolated into its own transition group, and doing that to every row of a
+   long scrolling list costs the compositor on every frame. */
+let activeTransition = null
 
 function withTransition(mutate) {
   if (!document.startViewTransition) {
     mutate()
     return
   }
-  document.startViewTransition(mutate)
+
+  const nameRows = () => {
+    for (const node of el.list.children) {
+      node.style.viewTransitionName = `item-${node.dataset.id}`
+    }
+  }
+
+  nameRows()
+
+  const transition = document.startViewTransition(() => {
+    mutate()
+    nameRows()
+  })
+
+  activeTransition = transition
+
+  transition.finished
+    .catch(() => {})
+    .then(() => {
+      if (activeTransition !== transition) return
+      activeTransition = null
+      for (const node of el.list.children) node.style.viewTransitionName = ''
+    })
+}
+
+const THUMB_WIDTH = 96
+
+/* Decoding a 12 megapixel photo to paint a 34px square is the single most
+   expensive thing a long queue does, and it happens again every time a row
+   scrolls into view. Render one small bitmap instead and keep the original
+   file for the compare dialog. */
+async function makeThumb(item) {
+  if (!SUPPORTED_TYPES.includes(item.type)) return
+
+  try {
+    const bitmap = await createImageBitmap(item.file, { resizeWidth: THUMB_WIDTH, resizeQuality: 'low' })
+    const canvas = new OffscreenCanvas(bitmap.width, bitmap.height)
+    canvas.getContext('2d').drawImage(bitmap, 0, 0)
+    bitmap.close()
+
+    const blob = await canvas.convertToBlob({ type: 'image/webp', quality: 0.8 })
+    if (item.removed) return
+    item.thumbUrl = URL.createObjectURL(blob)
+    syncRow(item)
+  } catch {
+    if (item.removed) return
+    item.thumbUrl = URL.createObjectURL(item.file)
+    syncRow(item)
+  }
 }
 
 function appendRow(item) {
   const node = el.tpl.content.firstElementChild.cloneNode(true)
   item.el = node
   node.dataset.id = String(item.id)
-  node.style.viewTransitionName = `item-${item.id}`
 
   node.querySelector('.item__hit').addEventListener('click', () => openCompare(item))
   node.querySelector('[data-act="download"]').addEventListener('click', (event) => {
@@ -410,6 +464,7 @@ function describe(item) {
 function removeItem(item) {
   item.removed = true
   if (item.thumbUrl) URL.revokeObjectURL(item.thumbUrl)
+  if (item.previewUrl) URL.revokeObjectURL(item.previewUrl)
   if (item.outUrl) URL.revokeObjectURL(item.outUrl)
   item.thumbUrl = ''
   item.outUrl = ''
@@ -442,6 +497,7 @@ function clearAll() {
   for (const item of state.items) {
     item.removed = true
     if (item.thumbUrl) URL.revokeObjectURL(item.thumbUrl)
+    if (item.previewUrl) URL.revokeObjectURL(item.previewUrl)
     if (item.outUrl) URL.revokeObjectURL(item.outUrl)
   }
   state.items = []
@@ -648,7 +704,8 @@ function openCompare(item) {
   state.compare = item
 
   el.cmpName.textContent = item.name
-  el.cmpA.src = item.thumbUrl || ''
+  item.previewUrl ??= URL.createObjectURL(item.file)
+  el.cmpA.src = item.previewUrl
   el.cmpB.src = item.outUrl
   el.cmpStage.style.setProperty('--pos', '50%')
   el.cmpRange.value = '50'
