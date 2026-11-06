@@ -855,7 +855,6 @@ function bindSettings() {
   el.format.addEventListener('change', () => {
     settings.format = el.format.value
     persist()
-    updateFormatHint()
     markStale()
   })
 
