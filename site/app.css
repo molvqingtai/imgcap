@@ -485,7 +485,7 @@ kbd {
   gap: 4px;
 }
 
-.presets__select {
+.select.presets__select {
   display: none;
 }
 
@@ -1391,7 +1391,7 @@ body.is-dragging .dragveil {
     display: none;
   }
 
-  .presets__select {
+  .select.presets__select {
     display: flex;
   }
 
