@@ -57,6 +57,7 @@
   --shadow-3: 0 24px 70px -30px rgb(17 21 19 / 45%), 0 2px 8px rgb(17 21 19 / 6%);
 
   --bar-h: 54px;
+  --shell: 1280px;
   color-scheme: light;
 }
 
@@ -331,7 +332,7 @@ kbd {
   align-items: center;
   gap: 12px;
   height: var(--bar-h);
-  padding: 0 16px;
+  padding: 0 max(16px, calc((100% - var(--shell)) / 2));
   background: var(--surface);
 }
 
@@ -400,7 +401,8 @@ kbd {
   display: flex;
   align-items: center;
   gap: 20px;
-  margin: 12px 16px 0;
+  width: min(var(--shell), 100% - 32px);
+  margin: 12px auto 0;
   padding: 10px 14px;
   border: 1px solid var(--line);
   border-radius: var(--r-lg);
@@ -568,11 +570,15 @@ kbd {
   display: flex;
   align-items: stretch;
   min-height: 0;
-  padding: 12px 16px 16px;
+  width: min(var(--shell), 100% - 32px);
+  margin-inline: auto;
+  padding: 12px 0 16px;
 }
 
 .foot {
-  padding: 0 16px 10px;
+  width: min(var(--shell), 100% - 32px);
+  margin-inline: auto;
+  padding: 0 0 10px;
   font-size: 11px;
   color: var(--muted);
   text-align: center;
@@ -1338,11 +1344,17 @@ body.is-dragging .dragveil {
 
   .app {
     min-height: 62vh;
-    padding: 10px;
+    padding: 10px 0;
   }
 
   .foot {
-    padding: 0 10px 8px;
+    padding: 0 0 8px;
+  }
+
+  .settings,
+  .app,
+  .foot {
+    width: min(var(--shell), 100% - 20px);
   }
 
   .bar {
