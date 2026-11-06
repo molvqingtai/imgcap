@@ -26,6 +26,7 @@ const el = {
   target: $('#target'),
   unit: $('#unit'),
   presets: $('#presets'),
+  presetSelect: $('#presetSelect'),
   format: $('#format'),
   resetBtn: $('#resetBtn'),
   compareDlg: $('#compareDlg'),
@@ -162,12 +163,25 @@ function formatAmount(value) {
   return String(Math.round(number * 100) / 100)
 }
 
+function applyPreset(kb) {
+  const asMb = kb >= 1024 && kb % 1024 === 0
+  settings.unit = asMb ? 'MB' : 'KB'
+  settings.amount = asMb ? kb / 1024 : kb
+  el.unit.value = settings.unit
+  el.target.value = formatAmount(settings.amount)
+  persist()
+  syncPresets()
+  markStale()
+}
+
 function syncPresets() {
   const bytes = targetBytes()
   for (const chip of el.presets.querySelectorAll('.chip')) {
     const kb = Number(chip.dataset.kb)
     chip.setAttribute('aria-pressed', bytes === kb * 1024 ? 'true' : 'false')
   }
+  const match = [...el.presetSelect.options].find((option) => Number(option.value) * 1024 === bytes)
+  el.presetSelect.selectedIndex = match ? match.index : -1
 }
 
 function markStale() {
@@ -736,15 +750,12 @@ function bindSettings() {
   el.presets.addEventListener('click', (event) => {
     const chip = event.target.closest('.chip')
     if (!chip) return
-    const kb = Number(chip.dataset.kb)
-    const asMb = kb >= 1024 && kb % 1024 === 0
-    settings.unit = asMb ? 'MB' : 'KB'
-    settings.amount = asMb ? kb / 1024 : kb
-    el.unit.value = settings.unit
-    el.target.value = formatAmount(settings.amount)
-    persist()
-    syncPresets()
-    markStale()
+    applyPreset(Number(chip.dataset.kb))
+  })
+
+  el.presetSelect.addEventListener('change', () => {
+    if (!el.presetSelect.value) return
+    applyPreset(Number(el.presetSelect.value))
   })
 
   el.format.addEventListener('change', () => {
