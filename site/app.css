@@ -89,6 +89,8 @@ html {
 }
 
 body {
+  /* keeps a double tap from zooming the app on touch screens */
+  touch-action: manipulation;
   display: grid;
   grid-template-rows: auto auto minmax(0, 1fr) auto;
   /* The smallest viewport, so a browser that keeps its toolbars on screen
