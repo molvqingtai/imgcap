@@ -1337,13 +1337,7 @@ body.is-dragging .dragveil {
 }
 
 @media (max-width: 780px) {
-  body {
-    height: auto;
-    min-height: 100dvh;
-  }
-
   .app {
-    min-height: 62vh;
     padding: 10px 0;
   }
 
@@ -1387,6 +1381,11 @@ body.is-dragging .dragveil {
     flex-wrap: wrap;
     gap: 8px 12px;
     padding: 10px;
+  }
+
+  .status__totals {
+    flex-wrap: wrap;
+    row-gap: 4px;
   }
 
   .status__actions {
