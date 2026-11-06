@@ -89,7 +89,7 @@ html {
 
 body {
   display: grid;
-  grid-template-rows: auto auto minmax(0, 1fr);
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
   height: 100dvh;
   background: var(--canvas);
   color: var(--ink);
@@ -386,18 +386,10 @@ kbd {
   margin-left: auto;
 }
 
-.bar__privacy {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
+.bar__credit {
   margin-right: 4px;
   font: 400 11px/1 var(--mono);
   color: var(--muted);
-}
-
-.bar__privacy svg {
-  width: 13px;
-  height: 13px;
 }
 
 /* ------------------------------------------------------------------ */
@@ -577,6 +569,13 @@ kbd {
   align-items: stretch;
   min-height: 0;
   padding: 12px 16px 16px;
+}
+
+.foot {
+  padding: 0 16px 10px;
+  font-size: 11px;
+  color: var(--muted);
+  text-align: center;
 }
 
 /* ------------------------------------------------------------------ */
@@ -1342,13 +1341,17 @@ body.is-dragging .dragveil {
     padding: 10px;
   }
 
+  .foot {
+    padding: 0 10px 8px;
+  }
+
   .bar {
     padding: 0 10px;
     gap: 8px;
   }
 
   .bar__note,
-  .bar__privacy,
+  .bar__credit,
   .bar__rule {
     display: none;
   }
