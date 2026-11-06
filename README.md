@@ -8,7 +8,7 @@ Automatically compress images to approximate target file size using binary searc
 $ pnpm install imgcap
 ```
 
-**[Open the compressor](https://imgcap.vercel.app/)**
+**[Live demo](https://imgcap.vercel.app/)**
 
 ### Why?
 
