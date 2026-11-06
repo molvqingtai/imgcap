@@ -77,6 +77,13 @@
         <path d="M20 12a8 8 0 1 1-2.6-5.9" />
         <path d="M20 4v4.5h-4.5" />
       </symbol>
+      <symbol id="i-broom" viewBox="0 0 24 24">
+        <g stroke-width="2.2">
+          <path d="M20.2 3.8 13.6 10.4" />
+          <path d="M12.4 9.2 14.8 11.6 10.4 17.6 5.9 13.1Z" />
+          <path d="M8.9 16.1 7.6 17.4M6.4 13.6 5.1 14.9" />
+        </g>
+      </symbol>
       <symbol id="i-reset" viewBox="0 0 24 24">
         <path d="M4 12a8 8 0 1 0 2.6-5.9" />
         <path d="M4 4v4.5h4.5" />
@@ -219,7 +226,15 @@
               <svg class="icon" aria-hidden="true"><use href="#i-download" /></svg>
               <span id="zipLabel">Download all</span>
             </button>
-            <button class="btn btn--quiet" id="clearBtn" type="button">Clear</button>
+            <button
+              class="btn btn--quiet btn--icon"
+              id="clearBtn"
+              type="button"
+              aria-label="Clear the queue"
+              title="Clear the queue"
+            >
+              <svg class="icon" aria-hidden="true"><use href="#i-broom" /></svg>
+            </button>
           </div>
         </div>
       </section>

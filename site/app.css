@@ -273,6 +273,18 @@ kbd {
   color: var(--ink);
 }
 
+.btn--icon {
+  width: 32px;
+  padding: 0;
+  justify-content: center;
+  color: var(--ink-2);
+}
+
+.btn--icon .icon {
+  width: 20px;
+  height: 20px;
+}
+
 .iconbtn {
   display: inline-grid;
   place-items: center;
