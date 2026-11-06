@@ -35,7 +35,7 @@ const [provide] = defineProxy(
   {
     namespace: 'imgcap:compress',
     heartbeatInterval: 250,
-    heartbeatTimeout: 15000,
+    heartbeatTimeout: 3 * 60 * 1000,
     transfer: true
   }
 )
