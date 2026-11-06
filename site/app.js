@@ -211,6 +211,7 @@ function addFiles(fileList) {
   let overflow = 0
   let rejected = 0
   let added = 0
+  const appended = []
 
   for (const file of files) {
     if (state.items.length >= MAX_FILES) {
@@ -258,7 +259,7 @@ function addFiles(fileList) {
     }
 
     state.items.push(item)
-    appendRow(item)
+    appended.push(item)
     added++
   }
 
@@ -267,14 +268,26 @@ function addFiles(fileList) {
   if (rejected) toast(`${rejected} file${rejected > 1 ? 's' : ''} could not be queued.`, 'warn')
   if (!added) return
 
-  chrome()
+  withTransition(() => {
+    for (const item of appended) appendRow(item)
+    chrome()
+  })
   pump()
+}
+
+function withTransition(mutate) {
+  if (!document.startViewTransition) {
+    mutate()
+    return
+  }
+  document.startViewTransition(mutate)
 }
 
 function appendRow(item) {
   const node = el.tpl.content.firstElementChild.cloneNode(true)
   item.el = node
   node.dataset.id = String(item.id)
+  node.style.viewTransitionName = `item-${item.id}`
 
   node.querySelector('.item__hit').addEventListener('click', () => openCompare(item))
   node.querySelector('[data-act="download"]').addEventListener('click', (event) => {
@@ -403,11 +416,14 @@ function removeItem(item) {
 
   const index = state.items.indexOf(item)
   if (index >= 0) state.items.splice(index, 1)
-  item.el?.remove()
-  item.el = null
 
   if (state.compare === item) el.compareDlg.close()
-  chrome()
+
+  withTransition(() => {
+    item.el?.remove()
+    item.el = null
+    chrome()
+  })
 }
 
 function canRetry(item) {
@@ -429,9 +445,12 @@ function clearAll() {
     if (item.outUrl) URL.revokeObjectURL(item.outUrl)
   }
   state.items = []
-  el.list.replaceChildren()
   if (el.compareDlg.open) el.compareDlg.close()
-  chrome()
+
+  withTransition(() => {
+    el.list.replaceChildren()
+    chrome()
+  })
 }
 
 /* ------------------------------------------------------------------ */

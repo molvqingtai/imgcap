@@ -1551,3 +1551,24 @@ body.is-dragging .dragveil {
     background: var(--lime-2);
   }
 }
+
+
+/* ------------------------------------------------------------------ */
+/* view transitions                                                   */
+/* ------------------------------------------------------------------ */
+
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation-duration: 240ms;
+    animation-timing-function: cubic-bezier(0.2, 0.75, 0.25, 1);
+  }
+
+  /* Rows are named, so they morph on their own; cross fading the whole
+     page on top of that only shows through as ghosting. */
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}
