@@ -75,7 +75,7 @@ const DICT = {
     same: '≈ same',
     errUnsupported: 'Unsupported format — use JPG, PNG, WebP or AVIF.',
     errEmpty: 'This file is empty.',
-    errTooLarge: 'Over 200 MB.',
+    errTooLarge: 'Larger than 200 MB.',
     errFailed: 'Compression failed.',
     statOriginal: 'Original',
     statOutput: 'Output',
