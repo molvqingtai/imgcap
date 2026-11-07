@@ -6,7 +6,7 @@
  * network does not.
  */
 
-const CACHE = 'imgcap-v3'
+const CACHE = 'imgcap-v4'
 
 const SHELL = [
   './',

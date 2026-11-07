@@ -15,7 +15,9 @@ const el = {
   drop: $('#drop'),
   dropInner: $('#dropInner'),
   fileInput: $('#fileInput'),
-  lang: $('#lang'),
+  langBtn: $('#langBtn'),
+  langMenu: $('#langMenu'),
+  langCode: $('#langCode'),
   queue: $('#queue'),
   list: $('#list'),
   count: $('#count'),
@@ -1002,13 +1004,77 @@ function renderText() {
   chrome()
   el.zipLabel.textContent = t('downloadAll')
   if (state.compare) el.cmpStats.replaceChildren(...compareStats(state.compare))
+  syncLangUI()
+}
+
+// The bar shows the code; the list spells the language out in its own words.
+const LANG_CODE = { en: 'EN', zh: 'ZH', ja: 'JA' }
+
+function syncLangUI() {
+  const current = getLang()
+  el.langCode.textContent = LANG_CODE[current] ?? current.toUpperCase()
+  for (const opt of el.langMenu.children) {
+    opt.setAttribute('aria-selected', String(opt.dataset.lang === current))
+  }
+}
+
+function openLang(open, { focus = open } = {}) {
+  el.langMenu.hidden = !open
+  el.langBtn.setAttribute('aria-expanded', String(open))
+  if (!open) return
+  if (focus) {
+    const current = el.langMenu.querySelector('[aria-selected="true"]') ?? el.langMenu.firstElementChild
+    current.focus()
+  }
+}
+
+function pickLang(value) {
+  openLang(false, { focus: false })
+  el.langBtn.focus()
+  if (value === getLang()) return
+  setLang(value)
+  renderText()
 }
 
 function bindLang() {
-  el.lang.value = getLang()
-  el.lang.addEventListener('change', () => {
-    setLang(el.lang.value)
-    renderText()
+  syncLangUI()
+  el.langBtn.addEventListener('click', () => openLang(el.langMenu.hidden))
+  el.langBtn.addEventListener('keydown', (event) => {
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      event.preventDefault()
+      openLang(true)
+    }
+  })
+  el.langMenu.addEventListener('click', (event) => {
+    const opt = event.target.closest('[data-lang]')
+    if (opt) pickLang(opt.dataset.lang)
+  })
+  el.langMenu.addEventListener('keydown', (event) => {
+    const opts = [...el.langMenu.children]
+    const at = opts.indexOf(document.activeElement)
+    if (event.key === 'Escape') {
+      event.preventDefault()
+      openLang(false, { focus: false })
+      el.langBtn.focus()
+    } else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      event.preventDefault()
+      const step = event.key === 'ArrowDown' ? 1 : -1
+      opts[(at + step + opts.length) % opts.length].focus()
+    } else if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault()
+      if (at >= 0) pickLang(opts[at].dataset.lang)
+    } else if (event.key === 'Tab') {
+      openLang(false, { focus: false })
+    }
+  })
+  document.addEventListener('click', (event) => {
+    if (!el.langMenu.hidden && !event.target.closest('#langPicker')) openLang(false, { focus: false })
+  })
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && !el.langMenu.hidden) {
+      openLang(false, { focus: false })
+      el.langBtn.focus()
+    }
   })
 }
 

@@ -561,26 +561,97 @@ kbd {
 }
 
 /* language picker sits in the bar, not the settings strip */
-.select--lang {
+/* The closed control shows the code; the list spells the language out. */
+.lang {
+  position: relative;
+}
+
+.lang__btn {
+  display: flex;
+  align-items: center;
+  gap: 3px;
   height: 28px;
-  border-color: transparent;
+  padding: 0 5px 0 8px;
+  border: 1px solid transparent;
+  border-radius: var(--r-md);
   background: transparent;
-}
-
-.select--lang:hover {
-  border-color: var(--line-2);
-}
-
-.select--lang select {
-  padding: 0 20px 0 8px;
-  font-size: 12px;
   color: var(--ink-2);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  touch-action: manipulation;
 }
 
-.select--lang .select__chevron {
-  right: 3px;
+.lang__btn:hover,
+.lang__btn[aria-expanded='true'] {
+  border-color: var(--line-2);
+  background: var(--surface-3);
+}
+
+.lang__chevron {
   width: 13px;
   height: 13px;
+  transition: transform 0.16s ease;
+}
+
+.lang__btn[aria-expanded='true'] .lang__chevron {
+  transform: rotate(180deg);
+}
+
+.lang__menu {
+  position: absolute;
+  top: calc(100% + 14px);
+  right: 0;
+  z-index: 30;
+  min-width: 148px;
+  margin: 0;
+  padding: 4px;
+  list-style: none;
+  background: var(--surface);
+  border: 1px solid var(--line-2);
+  border-radius: 10px;
+  box-shadow: 0 14px 30px rgba(17, 21, 19, 0.12);
+}
+
+.lang__menu[hidden] {
+  display: none;
+}
+
+.lang__opt {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 7px 8px;
+  border-radius: 6px;
+  color: var(--ink-2);
+  font-size: 13px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.lang__opt:hover,
+.lang__opt:focus-visible {
+  background: var(--surface-3);
+  outline: none;
+}
+
+.lang__opt[aria-selected='true'] {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.lang__opt svg {
+  width: 14px;
+  height: 14px;
+  color: var(--green);
+  opacity: 0;
+}
+
+.lang__opt[aria-selected='true'] svg {
+  opacity: 1;
 }
 
 .settings__end {

@@ -85,6 +85,9 @@
         <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
         <path d="M3 3v5h5" />
       </symbol>
+      <symbol id="i-check" viewBox="0 0 24 24">
+        <path d="M20 6 9 17l-5-5" />
+      </symbol>
       <symbol id="i-broom" viewBox="0 0 24 24">
         <path d="M13.5 10.5 22 2" />
         <path
@@ -115,13 +118,33 @@
         >
           <svg aria-hidden="true"><use href="#i-github" /></svg>
         </a>
-        <div class="select select--lang">
-          <select id="lang" aria-label="Language" data-i18n-aria="lang">
-            <option value="en">EN</option>
-            <option value="zh">ZH</option>
-            <option value="ja">JA</option>
-          </select>
-          <svg class="select__chevron" aria-hidden="true" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5" /></svg>
+        <div class="lang" id="langPicker">
+          <button
+            class="lang__btn"
+            id="langBtn"
+            type="button"
+            aria-haspopup="listbox"
+            aria-expanded="false"
+            aria-label="Language"
+            data-i18n-aria="lang"
+          >
+            <span id="langCode">EN</span>
+            <svg class="lang__chevron" aria-hidden="true" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5" /></svg>
+          </button>
+          <ul class="lang__menu" id="langMenu" role="listbox" aria-label="Language" data-i18n-aria="lang" hidden>
+            <li class="lang__opt" role="option" data-lang="en" aria-selected="true" tabindex="-1">
+              <span>English</span>
+              <svg aria-hidden="true"><use href="#i-check" /></svg>
+            </li>
+            <li class="lang__opt" role="option" data-lang="zh" aria-selected="false" tabindex="-1">
+              <span>中文</span>
+              <svg aria-hidden="true"><use href="#i-check" /></svg>
+            </li>
+            <li class="lang__opt" role="option" data-lang="ja" aria-selected="false" tabindex="-1">
+              <span>日本語</span>
+              <svg aria-hidden="true"><use href="#i-check" /></svg>
+            </li>
+          </ul>
         </div>
       </div>
     </header>
