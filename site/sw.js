@@ -6,7 +6,7 @@
  * network does not.
  */
 
-const CACHE = 'imgcap-v2'
+const CACHE = 'imgcap-v3'
 
 const SHELL = [
   './',
@@ -16,6 +16,7 @@ const SHELL = [
   './engine.js',
   './worker.js',
   './zip.js',
+  './i18n.js',
   './vendor/comctx.js',
   './vendor/imgcap.js',
   './fonts/inter.woff2',

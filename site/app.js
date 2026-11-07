@@ -1,6 +1,7 @@
 import { defineProxy } from './vendor/comctx.js'
 import { outputName, SUPPORTED_TYPES } from './engine.js'
 import { buildZip, sanitizeName, uniqueName } from './zip.js'
+import { getLang, initLang, onLangChange, setLang, t, translateDom } from './i18n.js'
 
 const NAMESPACE = 'imgcap:compress'
 const MAX_FILES = 80
@@ -14,6 +15,7 @@ const el = {
   drop: $('#drop'),
   dropInner: $('#dropInner'),
   fileInput: $('#fileInput'),
+  lang: $('#lang'),
   queue: $('#queue'),
   list: $('#list'),
   count: $('#count'),
@@ -249,15 +251,15 @@ function addFiles(fileList) {
 
     if (!SUPPORTED_TYPES.includes(type)) {
       item.state = 'error'
-      item.error = 'Unsupported format — use JPG, PNG, WebP or AVIF.'
+      item.error = t('errUnsupported')
       rejected++
     } else if (file.size === 0) {
       item.state = 'error'
-      item.error = 'This file is empty.'
+      item.error = t('errEmpty')
       rejected++
     } else if (file.size > MAX_BYTES) {
       item.state = 'error'
-      item.error = 'Larger than 200 MB — too large for in-browser processing.'
+      item.error = t('errTooLarge')
       rejected++
     }
 
@@ -266,9 +268,9 @@ function addFiles(fileList) {
     added++
   }
 
-  if (overflow) toast(`Only ${MAX_FILES} images can be queued at once. Add the rest after clearing.`, 'warn')
-  if (duplicates) toast(`${duplicates} duplicate${duplicates > 1 ? 's' : ''} skipped.`, 'info')
-  if (rejected) toast(`${rejected} file${rejected > 1 ? 's' : ''} could not be queued.`, 'warn')
+  if (overflow) toast(t('tooMany'), 'warn')
+  if (duplicates) toast(t('duplicates', { n: duplicates }), 'info')
+  if (rejected) toast(t('rejected', { n: rejected }), 'warn')
   if (!added) return
 
   withTransition(() => {
@@ -369,12 +371,12 @@ function appendRow(item) {
   syncRow(item)
 }
 
-const STATUS_TEXT = {
-  queued: 'Queued',
-  working: 'Working',
-  done: 'Done',
-  stale: 'Outdated',
-  error: 'Failed'
+const STATUS_KEYS = {
+  queued: 'queued',
+  working: 'working',
+  done: 'done',
+  stale: 'outdated',
+  error: 'failed'
 }
 
 function syncRow(item) {
@@ -386,7 +388,7 @@ function syncRow(item) {
 
   const status = node.querySelector('.item__status')
   status.dataset.state = state
-  status.textContent = STATUS_TEXT[state]
+  status.textContent = t(STATUS_KEYS[state])
 
   const img = node.querySelector('.item__thumb img')
   if (item.thumbUrl && img.getAttribute('src') !== item.thumbUrl) img.src = item.thumbUrl
@@ -418,11 +420,11 @@ function syncRow(item) {
     const percent = item.size > 0 ? Math.round((saved / item.size) * 100) : 0
     if (item.result.keptOriginal) {
       // Nothing was re-encoded: the file already fits, so both sides match.
-      delta.textContent = 'kept'
+      delta.textContent = t('kept')
     } else if (percent > 0) {
       delta.textContent = `−${percent}%`
     } else if (Math.abs(percent) <= 2) {
-      delta.textContent = '≈ same'
+      delta.textContent = t('same')
     } else {
       delta.textContent = `+${Math.abs(percent)}%`
       delta.classList.add('is-warn')
@@ -456,7 +458,12 @@ function describe(item) {
       { text: inputLabel === outputLabel ? outputLabel : `${inputLabel} → ${outputLabel}` }
     ]
 
-    if (resized) parts.push({ text: `from ${result.originalWidth}×${result.originalHeight}`, className: 'meta-from' })
+    if (resized) {
+      parts.push({
+        text: t('metaFrom', { w: result.originalWidth, h: result.originalHeight }),
+        className: 'meta-from'
+      })
+    }
 
     return parts
   }
@@ -547,7 +554,7 @@ async function runItem(item) {
   } catch (error) {
     if (item.removed) return
     item.state = 'error'
-    item.error = error?.message || 'Compression failed.'
+    item.error = error?.message || t('errFailed')
   } finally {
     state.running--
     if (!item.removed) {
@@ -588,7 +595,7 @@ async function downloadAll() {
   const ready = all.filter((item) => item.resultSignature === signatureNow)
   const skipped = all.length - ready.length
   if (!ready.length || state.zipping) {
-    if (all.length) toast('Re-apply the current settings before downloading.', 'warn')
+    if (all.length) toast(t('reapplyFirst'), 'warn')
     return
   }
 
@@ -603,17 +610,17 @@ async function downloadAll() {
     }))
 
     const zip = await buildZip(entries, (done, total) => {
-      el.zipLabel.textContent = `Packing ${done}/${total}`
+      el.zipLabel.textContent = t('packing', { done, total })
     })
 
     saveBlob(zip, `imgcap-${stamp()}.zip`)
-    const suffix = skipped ? ` (${skipped} awaiting re-apply)` : ''
-    toast(`Packed ${entries.length} image${entries.length > 1 ? 's' : ''} into one ZIP${suffix}.`)
+    const suffix = skipped ? t('packedSuffix', { n: skipped }) : ''
+    toast(t('packed', { n: entries.length, suffix }))
   } catch (error) {
-    toast(`Could not build the ZIP: ${error?.message || 'unknown error'}`, 'error')
+    toast(t('zipFailed', { msg: error?.message || 'unknown' }), 'error')
   } finally {
     state.zipping = false
-    el.zipLabel.textContent = 'Download all'
+    el.zipLabel.textContent = t('downloadAll')
     chrome()
   }
 }
@@ -647,7 +654,7 @@ function chrome() {
   el.list.hidden = items === 0
 
   if (!items) {
-    el.count.textContent = 'No images yet'
+    el.count.textContent = t('empty')
     el.totals.replaceChildren()
     el.zipBtn.disabled = true
     el.clearBtn.disabled = true
@@ -663,10 +670,10 @@ function chrome() {
   // "compressed" is the word that gives way first when the bar is narrow;
   // the running and failed counts stay.
   const complete = done.length === items
-  const counts = `${working ? ` · ${working} running` : ''}${failed ? ` · ${failed} failed` : ''}`
+  const counts = `${working ? t('running', { n: working }) : ''}${failed ? t('failedCount', { n: failed }) : ''}`
   el.count.replaceChildren(
-    textSpan(complete ? `${items} image${items > 1 ? 's' : ''}` : `${done.length}/${items}`),
-    textSpan(complete ? ` · ${done.length} compressed` : ' compressed', 'count__word'),
+    textSpan(t('countBase', { n: items, done: done.length, total: items, complete })),
+    textSpan(t('countWord', { done: done.length, complete }), 'count__word'),
     textSpan(counts)
   )
 
@@ -686,17 +693,17 @@ function chrome() {
       diff > 0 ? textSpan(`· −${percent}%`, 'saved') : textSpan(`· +${percent}%`, 'larger')
     )
   } else if (done.length) {
-    el.totals.append(textSpan(formatBytes(totalIn)), textSpan('· within target', 'saved'))
+    el.totals.append(textSpan(formatBytes(totalIn)), textSpan(t('withinTarget'), 'saved'))
   } else if (failed === items) {
-    el.totals.append(textSpan(`${failed} could not be read`, 'failed'))
+    el.totals.append(textSpan(t('couldNotRead', { n: failed }), 'failed'))
   } else {
-    el.totals.append(textSpan('Waiting for the first pass'))
+    el.totals.append(textSpan(t('waiting')))
   }
 
   el.zipBtn.disabled = !done.length || state.zipping
   el.clearBtn.disabled = state.zipping
   el.applyBtn.hidden = stale.length === 0
-  el.applyLabel.textContent = `Re-apply to ${stale.length}`
+  el.applyLabel.textContent = t('reapplyTo', { n: stale.length })
 }
 
 function textSpan(text, className) {
@@ -745,25 +752,25 @@ function compareStats(item) {
   const percent = item.size ? Math.round((saved / item.size) * 100) : 0
   const resized = result.width !== result.originalWidth || result.height !== result.originalHeight
 
-  add('Original', formatBytes(item.size))
-  add('Output', formatBytes(out))
+  add(t('statOriginal'), formatBytes(item.size))
+  add(t('statOutput'), formatBytes(out))
   add(
-    'Saved',
+    t('statSaved'),
     percent > 0
-      ? `−${formatBytes(saved)} · −${percent}%`
+      ? t('savedDown', { size: formatBytes(saved), percent })
       : saved < 0
-        ? `+${formatBytes(-saved)} · +${Math.abs(percent)}%`
-        : 'none',
+        ? t('savedUp', { size: formatBytes(-saved), percent: Math.abs(percent) })
+        : t('savedNone'),
     percent > 0 ? 'good' : 'warn'
   )
-  add(resized ? 'Dimensions' : 'Resolution', `${result.width}×${result.height}`)
+  add(resized ? t('statDimensions') : t('statResolution'), `${result.width}×${result.height}`)
   add(
-    'Format',
+    t('statFormat'),
     prettyType(item.type) === prettyType(result.type)
       ? prettyType(result.type)
       : `${prettyType(item.type)} → ${prettyType(result.type)}`
   )
-  add('Target', formatBytes(result.targetBytes))
+  add(t('statTarget'), formatBytes(result.targetBytes))
 
   return nodes
 }
@@ -990,8 +997,25 @@ function registerWorker() {
   navigator.serviceWorker.register('sw.js').catch(() => {})
 }
 
+function renderText() {
+  for (const item of state.items) syncRow(item)
+  chrome()
+  el.zipLabel.textContent = t('downloadAll')
+  if (state.compare) el.cmpStats.replaceChildren(...compareStats(state.compare))
+}
+
+function bindLang() {
+  el.lang.value = getLang()
+  el.lang.addEventListener('change', () => {
+    setLang(el.lang.value)
+    renderText()
+  })
+}
+
 function boot() {
+  initLang()
   harmonizeShortcuts()
+  bindLang()
   syncSettingsUI()
   bindSettings()
   bindFiles()

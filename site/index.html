@@ -38,7 +38,7 @@
     <link rel="stylesheet" href="./app.css" />
   </head>
   <body>
-    <a class="skip" href="#drop">Skip to the file picker</a>
+    <a class="skip" href="#drop" data-i18n="skip">Skip to the file picker</a>
 
     <svg class="sprite" aria-hidden="true" focusable="false">
       <!-- icons: lucide (ISC) -->
@@ -101,25 +101,34 @@
         <span class="brand__word">ImgCap</span>
       </a>
       <span class="bar__rule" aria-hidden="true"></span>
-      <span class="bar__note">Image compressor</span>
+      <span class="bar__note" data-i18n="note">Image compressor</span>
 
       <div class="bar__end">
         <span class="bar__credit">by molvqingtai</span>
+        <div class="select select--lang">
+          <select id="lang" aria-label="Language" data-i18n-aria="lang">
+            <option value="en">English</option>
+            <option value="zh">中文</option>
+            <option value="ja">日本語</option>
+          </select>
+          <svg class="select__chevron" aria-hidden="true" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5" /></svg>
+        </div>
         <a
           class="iconbtn"
           href="https://github.com/molvqingtai/imgcap"
           target="_blank"
           rel="noreferrer"
           aria-label="Source on GitHub"
+          data-i18n-aria="github"
         >
           <svg aria-hidden="true"><use href="#i-github" /></svg>
         </a>
       </div>
     </header>
 
-    <section class="settings" aria-label="Compression settings">
+    <section class="settings" aria-label="Compression settings" data-i18n-aria="settings">
       <div class="setting">
-        <label class="setting__label" for="target">Target size</label>
+        <label class="setting__label" for="target" data-i18n="target">Target size</label>
         <div class="target">
           <input
             class="target__input"
@@ -131,7 +140,7 @@
             step="any"
             value="500"
           />
-          <label class="visually-hidden" for="unit">Unit</label>
+          <label class="visually-hidden" for="unit" data-i18n="unit">Unit</label>
           <select class="target__unit" id="unit">
             <option value="KB">KB</option>
             <option value="MB">MB</option>
@@ -140,7 +149,7 @@
       </div>
 
       <div class="setting setting--presets">
-        <span class="setting__label" id="presetsLabel">Presets</span>
+        <span class="setting__label" id="presetsLabel" data-i18n="presets">Presets</span>
         <div class="chips" id="presets" role="group" aria-labelledby="presetsLabel">
           <button class="chip" type="button" data-kb="100">100</button>
           <button class="chip" type="button" data-kb="250">250</button>
@@ -149,8 +158,8 @@
           <button class="chip" type="button" data-kb="2048">2 MB</button>
         </div>
         <div class="select presets__select">
-          <select id="presetSelect" aria-label="Presets">
-            <option value="">None</option>
+          <select id="presetSelect" aria-label="Presets" data-i18n-aria="presets">
+            <option value="" data-i18n="presetNone">None</option>
             <option value="100">100 KB</option>
             <option value="250">250 KB</option>
             <option value="500">500 KB</option>
@@ -162,10 +171,10 @@
       </div>
 
       <div class="setting">
-        <label class="setting__label" for="format">Format</label>
+        <label class="setting__label" for="format" data-i18n="format">Format</label>
         <div class="select">
           <select id="format">
-            <option value="keep">Auto</option>
+            <option value="keep" data-i18n="formatAuto">Auto</option>
             <option value="image/webp">WebP</option>
             <option value="image/jpeg">JPG</option>
             <option value="image/png">PNG</option>
@@ -181,6 +190,8 @@
         type="button"
         aria-label="Reset settings"
         title="Reset settings"
+        data-i18n-aria="reset"
+        data-i18n-title="reset"
       >
         <svg aria-hidden="true"><use href="#i-reset" /></svg>
       </button>
@@ -188,7 +199,7 @@
       <div class="settings__end">
         <button class="btn btn--ink" id="addBtn" type="button">
           <svg class="icon" aria-hidden="true"><use href="#i-plus" /></svg>
-          <span>Add images</span>
+          <span data-i18n="add">Add images</span>
         </button>
       </div>
     </section>
@@ -196,7 +207,7 @@
     <main class="app">
       <input id="fileInput" class="visually-hidden" type="file" accept="image/*" multiple tabindex="-1" />
 
-      <section class="queue" id="queue" data-empty="true" aria-label="Queue">
+      <section class="queue" id="queue" data-empty="true" aria-label="Queue" data-i18n-aria="queue">
         <div
           class="drop"
           id="drop"
@@ -207,14 +218,17 @@
             role="button"
             tabindex="0"
             aria-label="Add images. Drop files, browse, or paste from the clipboard."
+            data-i18n-aria="dropAria"
           >
             <span class="drop__icon" aria-hidden="true"><svg><use href="#i-image" /></svg></span>
-            <p class="drop__title">Drop images here</p>
+            <p class="drop__title" data-i18n="dropTitle">Drop images here</p>
             <p class="drop__sub">
-              <span class="linkbtn">Browse files</span><span class="sep" aria-hidden="true">/</span>paste with
+              <span class="linkbtn" data-i18n="dropBrowse">Browse files</span
+              ><span class="sep" aria-hidden="true">/</span
+              ><span data-i18n="dropPaste">paste with</span>
               <kbd>⌘</kbd><kbd>V</kbd>
             </p>
-            <p class="drop__formats">JPG · PNG · WebP · AVIF <span>· up to 80 files</span></p>
+            <p class="drop__formats">JPG · PNG · WebP · AVIF <span data-i18n="upTo">· up to 80 files</span></p>
           </div>
         </div>
 
@@ -222,7 +236,7 @@
 
         <div class="status">
           <div class="status__summary" id="summary" aria-live="polite">
-            <span class="status__count" id="count">No images yet</span>
+            <span class="status__count" id="count" data-i18n="empty">No images yet</span>
             <span class="status__totals" id="totals"></span>
           </div>
           <div class="status__actions">
@@ -241,6 +255,8 @@
               disabled
               aria-label="Clear the queue"
               title="Clear the queue"
+              data-i18n-aria="clear"
+              data-i18n-title="clear"
             >
               <svg class="icon" aria-hidden="true"><use href="#i-broom" /></svg>
             </button>
@@ -249,24 +265,24 @@
       </section>
     </main>
 
-    <footer class="foot">Everything runs locally in your browser — images are never uploaded.</footer>
+    <footer class="foot" data-i18n="foot">Everything runs locally in your browser — images are never uploaded.</footer>
 
     <dialog class="modal" id="compareDlg" aria-labelledby="cmpName">
       <div class="modal__head">
         <div class="modal__title">
           <h2 id="cmpName">image.jpg</h2>
-          <p class="modal__sub">Drag the divider to compare</p>
+          <p class="modal__sub" data-i18n="cmpSub">Drag the divider to compare</p>
         </div>
-        <button class="iconbtn" type="button" data-close aria-label="Close">
+        <button class="iconbtn" type="button" data-close aria-label="Close" data-i18n-aria="close">
           <svg aria-hidden="true"><use href="#i-close" /></svg>
         </button>
       </div>
 
       <div class="cmp" id="cmpStage">
-        <img class="cmp__img" id="cmpA" alt="Original" />
-        <img class="cmp__img cmp__img--out" id="cmpB" alt="Compressed" />
-        <span class="cmp__tag cmp__tag--a">Original</span>
-        <span class="cmp__tag cmp__tag--b">Compressed</span>
+        <img class="cmp__img" id="cmpA" alt="Original" data-i18n-alt="original" />
+        <img class="cmp__img cmp__img--out" id="cmpB" alt="Compressed" data-i18n-alt="compressed" />
+        <span class="cmp__tag cmp__tag--a" data-i18n="original">Original</span>
+        <span class="cmp__tag cmp__tag--b" data-i18n="compressed">Compressed</span>
         <div class="cmp__line" aria-hidden="true"><span class="cmp__handle"></span></div>
         <input
           class="cmp__range"
@@ -275,7 +291,7 @@
           min="0"
           max="100"
           value="50"
-          aria-label="Reveal compressed image"
+          aria-label="Reveal compressed image" data-i18n-aria="reveal"
         />
       </div>
 
@@ -284,7 +300,7 @@
       <div class="modal__foot">
         <button class="btn btn--ink" id="cmpDownload" type="button">
           <svg class="icon" aria-hidden="true"><use href="#i-download" /></svg>
-          <span>Download</span>
+          <span data-i18n="download">Download</span>
         </button>
       </div>
     </dialog>
@@ -306,13 +322,13 @@
           </span>
         </button>
         <span class="item__actions">
-          <button class="iconbtn iconbtn--sm" type="button" data-act="download" aria-label="Download" hidden>
+          <button class="iconbtn iconbtn--sm" type="button" data-act="download" aria-label="Download" data-i18n-aria="rowDownload" hidden>
             <svg aria-hidden="true"><use href="#i-download" /></svg>
           </button>
-          <button class="iconbtn iconbtn--sm" type="button" data-act="retry" aria-label="Try again" hidden>
+          <button class="iconbtn iconbtn--sm" type="button" data-act="retry" aria-label="Try again" data-i18n-aria="rowRetry" hidden>
             <svg aria-hidden="true"><use href="#i-refresh" /></svg>
           </button>
-          <button class="iconbtn iconbtn--sm" type="button" data-act="remove" aria-label="Remove">
+          <button class="iconbtn iconbtn--sm" type="button" data-act="remove" aria-label="Remove" data-i18n-aria="rowRemove">
             <svg aria-hidden="true"><use href="#i-close" /></svg>
           </button>
         </span>
@@ -325,13 +341,13 @@
     <div class="dragveil" aria-hidden="true">
       <div class="dragveil__box">
         <svg><use href="#i-image" /></svg>
-        <p>Drop to compress</p>
+        <p data-i18n="dragDrop">Drop to compress</p>
         <span>JPG · PNG · WebP · AVIF</span>
       </div>
     </div>
 
     <noscript>
-      <p class="noscript">ImgCap needs JavaScript to compress images on your device.</p>
+      <p class="noscript" data-i18n="noscript">ImgCap needs JavaScript to compress images on your device.</p>
     </noscript>
 
     <script type="application/ld+json">
