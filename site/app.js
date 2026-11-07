@@ -5,7 +5,7 @@ import { getLang, initLang, onLangChange, setLang, t, translateDom } from './i18
 
 const NAMESPACE = 'imgcap:compress'
 const MAX_FILES = 80
-const MAX_BYTES = 512 * 1024 * 1024
+const MAX_BYTES = 200 * 1024 * 1024
 const SETTINGS_KEY = 'imgcap.settings.v1'
 const CONCURRENCY = Math.min(4, Math.max(2, (navigator.hardwareConcurrency || 4) - 1))
 

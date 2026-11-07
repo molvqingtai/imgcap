@@ -35,7 +35,7 @@ export async function compress(file, settings) {
   try {
     bitmap = await createImageBitmap(file)
   } catch {
-    throw new Error('This file could not be decoded as an image.')
+    throw new Error('This image could not be decoded — it may be larger than the browser can handle.')
   }
 
   const originalWidth = bitmap.width
