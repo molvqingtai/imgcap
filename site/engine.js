@@ -31,12 +31,8 @@ export async function compress(file, settings) {
     throw new Error('Unsupported output format.')
   }
 
-  let bitmap
-  try {
-    bitmap = await createImageBitmap(file)
-  } catch {
-    throw new Error('This image could not be decoded — it may be larger than the browser can handle.')
-  }
+  // No wrapping: whatever the browser says about the decode is what the row shows.
+  const bitmap = await createImageBitmap(file)
 
   const originalWidth = bitmap.width
   const originalHeight = bitmap.height
