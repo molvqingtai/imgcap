@@ -42,27 +42,12 @@ export async function compress(file, settings) {
   const originalHeight = bitmap.height
   bitmap.close()
 
-  const sameFormat = outputType === file.type
-
-  // Already within the limit and nothing to convert: pass it straight through.
-  if (sameFormat && file.size <= targetBytes) {
-    return {
-      blob: file,
-      type: file.type,
-      width: originalWidth,
-      height: originalHeight,
-      originalWidth,
-      originalHeight,
-      targetBytes,
-      keptOriginal: true
-    }
-  }
-
+  // imgcap returns the file untouched when it already fits and the type matches.
   const blob = await imgcap(file, { targetSize: targetBytes, outputType })
 
-  // If the file already fits and encoding only made it bigger
-  // (a tiny PNG converted to WebP often does), keep the original.
-  if (file.size <= targetBytes && blob.size >= file.size) {
+  // A conversion can still come out bigger than an original that already fits
+  // (a small PNG to WebP often does); keep the original in that case.
+  if (blob !== file && file.size <= targetBytes && blob.size >= file.size) {
     return {
       blob: file,
       type: file.type,
@@ -92,6 +77,6 @@ export async function compress(file, settings) {
     originalWidth,
     originalHeight,
     targetBytes,
-    keptOriginal: false
+    keptOriginal: blob === file
   }
 }
