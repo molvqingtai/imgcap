@@ -55,6 +55,11 @@ jobs:
     needs: [setup]
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    # The image ships the browser, so nothing is downloaded here. The tag must
+    # match playwright in __tests__/package.json; bump it together with the dep.
+    container:
+      image: mcr.microsoft.com/playwright:v1.54.1-noble
+      options: --user 1001
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -63,34 +68,9 @@ jobs:
       - uses: pnpm/action-setup@v4
         with:
           version: latest
-      - name: Restore dependencies
-        if: needs.setup.outputs.cache-hit != 'true'
+      - name: Install dependencies
         run: pnpm install --frozen-lockfile --ignore-scripts
         timeout-minutes: 10
-      # No browser cache: the payload takes a second on these runners, and a
-      # half-restored ~/.cache/ms-playwright is one more thing that can stall
-      # the installer without printing anything.
-      - name: Install browser dependencies
-        run: pnpm --filter __tests__ exec playwright install-deps chromium
-        timeout-minutes: 8
-
-      - name: Install Chromium
-        env:
-          PLAYWRIGHT_DOWNLOAD_CONNECTION_TIMEOUT: '120000'
-        run: |
-          df -h / | tail -1
-          for attempt in 1 2 3; do
-            echo "install attempt $attempt"
-            if timeout 300 pnpm --filter __tests__ exec playwright install chromium; then
-              ls ~/.cache/ms-playwright
-              exit 0
-            fi
-            echo "attempt $attempt did not finish; clearing the cache and retrying"
-            rm -rf ~/.cache/ms-playwright
-            sleep 5
-          done
-          exit 1
-        timeout-minutes: 20
       - run: pnpm run build
         timeout-minutes: 10
       - run: pnpm run test
