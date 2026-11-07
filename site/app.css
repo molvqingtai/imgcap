@@ -744,6 +744,11 @@ kbd {
   color: var(--muted);
 }
 
+.drop__sub kbd:first-of-type {
+  /* the command glyph only looks like a key on a face that has it */
+  font: 500 13px/1.27 var(--sans);
+}
+
 .drop__formats {
   margin: 14px 0 0;
   font: 400 11px/1 var(--mono);

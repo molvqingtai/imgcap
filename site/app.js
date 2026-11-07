@@ -964,14 +964,6 @@ function bindCompare() {
   })
 }
 
-function harmonizeShortcuts() {
-  // ⌘ is wrong on Windows and Linux; render the platform's own modifier.
-  if (/Mac|iPhone|iPad|iPod/.test(navigator.platform)) return
-  for (const key of document.querySelectorAll('.drop__sub kbd')) {
-    if (key.textContent === '⌘') key.textContent = 'Ctrl'
-  }
-}
-
 function bindBar() {
   const bar = $('.bar')
 
@@ -1135,7 +1127,6 @@ function setUnit(value) {
 
 function boot() {
   initLang()
-  harmonizeShortcuts()
   syncPickerLabels()
   // chrome() only owns the numbers; this label is ours from the first frame.
   el.zipLabel.textContent = t('downloadAll')
