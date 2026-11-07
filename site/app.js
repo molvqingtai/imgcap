@@ -1016,6 +1016,8 @@ function boot() {
   initLang()
   harmonizeShortcuts()
   bindLang()
+  // chrome() only owns the numbers; this label is ours from the first frame.
+  el.zipLabel.textContent = t('downloadAll')
   syncSettingsUI()
   bindSettings()
   bindFiles()
