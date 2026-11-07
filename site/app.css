@@ -601,6 +601,7 @@ kbd {
 /* dropzone                                                           */
 /* ------------------------------------------------------------------ */
 
+/* The whole panel is the drop target; only the content is the button. */
 .drop {
   position: relative;
   display: grid;
@@ -608,25 +609,21 @@ kbd {
   flex: 1;
   min-height: 200px;
   color: var(--ink);
-  cursor: pointer;
-  transition: background 0.16s ease;
-}
-
-.drop:hover {
-  background: #fdfefb;
-}
-
-.drop:focus-visible {
-  outline: none;
-  box-shadow: inset 0 0 0 2px var(--lime-2);
 }
 
 .drop__inner {
   display: grid;
   justify-items: center;
   gap: 2px;
-  padding: 24px;
+  padding: 26px 30px;
+  border-radius: var(--r-lg);
   text-align: center;
+  cursor: pointer;
+  transition: background 0.16s ease;
+}
+
+.drop__inner:hover {
+  background: var(--surface-3);
 }
 
 .drop__icon {

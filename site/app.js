@@ -12,6 +12,7 @@ const $ = (selector) => document.querySelector(selector)
 
 const el = {
   drop: $('#drop'),
+  dropInner: $('#dropInner'),
   fileInput: $('#fileInput'),
   queue: $('#queue'),
   list: $('#list'),
@@ -872,8 +873,8 @@ function bindSettings() {
 }
 
 function bindFiles() {
-  el.drop.addEventListener('click', () => el.fileInput.click())
-  el.drop.addEventListener('keydown', (event) => {
+  el.dropInner.addEventListener('click', () => el.fileInput.click())
+  el.dropInner.addEventListener('keydown', (event) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault()
       el.fileInput.click()
