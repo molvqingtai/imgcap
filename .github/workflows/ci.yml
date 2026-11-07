@@ -21,7 +21,7 @@ jobs:
         with:
           version: latest
       - name: Cache pnpm store
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: pnpm-cache
         with:
           path: |
@@ -68,14 +68,30 @@ jobs:
         if: needs.setup.outputs.cache-hit != 'true'
         run: pnpm install --frozen-lockfile --ignore-scripts
         timeout-minutes: 10
-      - name: Cache Chromium
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ hashFiles('pnpm-lock.yaml') }}
+      # No browser cache: the payload takes a second on these runners, and a
+      # half-restored ~/.cache/ms-playwright is one more thing that can stall
+      # the installer without printing anything.
+      - name: Install browser dependencies
+        run: pnpm --filter __tests__ exec playwright install-deps chromium
+        timeout-minutes: 8
+
       - name: Install Chromium
-        run: pnpm --filter __tests__ exec playwright install --with-deps chromium
-        timeout-minutes: 15
+        env:
+          PLAYWRIGHT_DOWNLOAD_CONNECTION_TIMEOUT: '120000'
+        run: |
+          df -h / | tail -1
+          for attempt in 1 2 3; do
+            echo "install attempt $attempt"
+            if timeout 300 pnpm --filter __tests__ exec playwright install chromium; then
+              ls ~/.cache/ms-playwright
+              exit 0
+            fi
+            echo "attempt $attempt did not finish; clearing the cache and retrying"
+            rm -rf ~/.cache/ms-playwright
+            sleep 5
+          done
+          exit 1
+        timeout-minutes: 20
       - run: pnpm run build
         timeout-minutes: 10
       - run: pnpm run test
