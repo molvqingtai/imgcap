@@ -434,13 +434,13 @@ kbd {
 }
 
 .target {
+  position: relative;
   display: flex;
   align-items: stretch;
   height: 30px;
   border: 1px solid var(--line-2);
   border-radius: var(--r-sm);
   background: var(--surface);
-  overflow: hidden;
   transition: border-color 0.14s ease;
 }
 
@@ -462,28 +462,37 @@ kbd {
   outline: none;
 }
 
-.target__unit {
+.pick--unit .pick__btn {
   height: 100%;
-  padding: 0 4px 0 6px;
+  padding: 0 3px 0 6px;
   border: 0;
   border-left: 1px solid var(--line);
+  border-radius: 0 calc(var(--r-sm) - 1px) calc(var(--r-sm) - 1px) 0;
   background: var(--surface-2);
-  font: 500 11px/1 var(--mono);
   color: var(--ink-2);
-  cursor: pointer;
-  appearance: none;
-  padding-right: 16px;
-  background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%),
-    linear-gradient(135deg, var(--muted) 50%, transparent 50%);
-  background-position:
-    right 9px center,
-    right 6px center;
-  background-size: 3px 3px, 3px 3px;
-  background-repeat: no-repeat;
+  font: 500 11px/1 var(--mono);
+  letter-spacing: 0.04em;
 }
 
-.target__unit:focus {
-  outline: none;
+.pick--unit .pick__btn:hover,
+.pick--unit .pick__btn[aria-expanded='true'] {
+  background: var(--surface-3);
+}
+
+.pick--unit .pick__chevron {
+  width: 11px;
+  height: 11px;
+  color: var(--muted);
+}
+
+.pick--unit .pick__btn {
+  gap: 2px;
+}
+
+.pick--unit .pick__menu {
+  left: 0;
+  right: auto;
+  min-width: 96px;
 }
 
 .chips {
@@ -491,7 +500,7 @@ kbd {
   gap: 4px;
 }
 
-.select.presets__select {
+.pick.pick--presets {
   display: none;
 }
 
@@ -521,52 +530,14 @@ kbd {
   color: var(--lime);
 }
 
-.select {
+/* One picker for every choice: a button, a list, nothing native. */
+.pick {
   position: relative;
   display: flex;
   align-items: center;
-  height: 30px;
-  border: 1px solid var(--line-2);
-  border-radius: var(--r-sm);
-  background: var(--surface);
-  transition: border-color 0.14s ease;
 }
 
-.select:focus-within {
-  border-color: var(--ink);
-}
-
-.select select {
-  height: 100%;
-  padding: 0 26px 0 9px;
-  border: 0;
-  background: none;
-  font: 500 12.5px/1 var(--sans);
-  color: var(--ink);
-  cursor: pointer;
-  appearance: none;
-}
-
-.select select:focus {
-  outline: none;
-}
-
-.select__chevron {
-  position: absolute;
-  right: 6px;
-  width: 14px;
-  height: 14px;
-  color: var(--muted);
-  pointer-events: none;
-}
-
-/* language picker sits in the bar, not the settings strip */
-/* The closed control shows the code; the list spells the language out. */
-.lang {
-  position: relative;
-}
-
-.lang__btn {
+.pick__btn {
   display: flex;
   align-items: center;
   gap: 3px;
@@ -584,25 +555,49 @@ kbd {
   touch-action: manipulation;
 }
 
-.lang__btn:hover,
-.lang__btn[aria-expanded='true'] {
+.pick__btn:hover,
+.pick__btn[aria-expanded='true'] {
   border-color: var(--line-2);
   background: var(--surface-3);
 }
 
-.lang__chevron {
+.pick__chevron {
   width: 13px;
   height: 13px;
   transition: transform 0.16s ease;
 }
 
-.lang__btn[aria-expanded='true'] .lang__chevron {
+.pick__btn[aria-expanded='true'] .pick__chevron {
   transform: rotate(180deg);
 }
 
-.lang__menu {
+.pick--box .pick__btn {
+  height: 30px;
+  padding: 0 6px 0 9px;
+  border-color: var(--line-2);
+  border-radius: var(--r-sm);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+.pick--box .pick__btn:hover,
+.pick--box .pick__btn[aria-expanded='true'] {
+  border-color: var(--line-2);
+  background: var(--surface-3);
+}
+
+.pick--box .pick__chevron {
+  width: 14px;
+  height: 14px;
+  color: var(--muted);
+}
+
+.pick__menu {
   position: absolute;
-  top: calc(100% + 14px);
+  top: calc(100% + 6px);
   right: 0;
   z-index: 30;
   min-width: 148px;
@@ -615,11 +610,11 @@ kbd {
   box-shadow: 0 14px 30px rgba(17, 21, 19, 0.12);
 }
 
-.lang__menu[hidden] {
+.pick__menu[hidden] {
   display: none;
 }
 
-.lang__opt {
+.pick__opt {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -632,25 +627,25 @@ kbd {
   cursor: pointer;
 }
 
-.lang__opt:hover,
-.lang__opt:focus-visible {
+.pick__opt:hover,
+.pick__opt:focus-visible {
   background: var(--surface-3);
   outline: none;
 }
 
-.lang__opt[aria-selected='true'] {
+.pick__opt[aria-selected='true'] {
   color: var(--ink);
   font-weight: 600;
 }
 
-.lang__opt svg {
+.pick__opt svg {
   width: 14px;
   height: 14px;
   color: var(--green);
   opacity: 0;
 }
 
-.lang__opt[aria-selected='true'] svg {
+.pick__opt[aria-selected='true'] svg {
   opacity: 1;
 }
 
@@ -1496,7 +1491,7 @@ body.is-dragging .dragveil {
     display: none;
   }
 
-  .select.presets__select {
+  .pick.pick--presets {
     display: flex;
   }
 

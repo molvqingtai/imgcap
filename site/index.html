@@ -118,9 +118,9 @@
         >
           <svg aria-hidden="true"><use href="#i-github" /></svg>
         </a>
-        <div class="lang" id="langPicker">
+        <div class="pick" id="langPicker">
           <button
-            class="lang__btn"
+            class="pick__btn"
             id="langBtn"
             type="button"
             aria-haspopup="listbox"
@@ -129,18 +129,18 @@
             data-i18n-aria="lang"
           >
             <span id="langCode">EN</span>
-            <svg class="lang__chevron" aria-hidden="true" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5" /></svg>
+            <svg class="pick__chevron" aria-hidden="true" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5" /></svg>
           </button>
-          <ul class="lang__menu" id="langMenu" role="listbox" aria-label="Language" data-i18n-aria="lang" hidden>
-            <li class="lang__opt" role="option" data-lang="en" aria-selected="true" tabindex="-1">
+          <ul class="pick__menu" id="langMenu" role="listbox" aria-label="Language" data-i18n-aria="lang" hidden>
+            <li class="pick__opt" role="option" data-value="en" data-short="EN" aria-selected="true" tabindex="-1">
               <span>English</span>
               <svg aria-hidden="true"><use href="#i-check" /></svg>
             </li>
-            <li class="lang__opt" role="option" data-lang="zh" aria-selected="false" tabindex="-1">
+            <li class="pick__opt" role="option" data-value="zh" data-short="ZH" aria-selected="false" tabindex="-1">
               <span>中文</span>
               <svg aria-hidden="true"><use href="#i-check" /></svg>
             </li>
-            <li class="lang__opt" role="option" data-lang="ja" aria-selected="false" tabindex="-1">
+            <li class="pick__opt" role="option" data-value="ja" data-short="JA" aria-selected="false" tabindex="-1">
               <span>日本語</span>
               <svg aria-hidden="true"><use href="#i-check" /></svg>
             </li>
@@ -163,11 +163,30 @@
             step="any"
             value="500"
           />
-          <label class="visually-hidden" for="unit" data-i18n="unit">Unit</label>
-          <select class="target__unit" id="unit">
-            <option value="KB">KB</option>
-            <option value="MB">MB</option>
-          </select>
+          <div class="pick pick--unit" id="unitPick">
+            <button
+              class="pick__btn"
+              id="unitBtn"
+              type="button"
+              aria-haspopup="listbox"
+              aria-expanded="false"
+              aria-label="Unit"
+              data-i18n-aria="unit"
+            >
+              <span id="unitLabel">KB</span>
+              <svg class="pick__chevron" aria-hidden="true" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5" /></svg>
+            </button>
+            <ul class="pick__menu" id="unitMenu" role="listbox" aria-label="Unit" data-i18n-aria="unit" hidden>
+              <li class="pick__opt" role="option" data-value="KB" aria-selected="true" tabindex="-1">
+                <span>KB</span>
+                <svg aria-hidden="true"><use href="#i-check" /></svg>
+              </li>
+              <li class="pick__opt" role="option" data-value="MB" aria-selected="false" tabindex="-1">
+                <span>MB</span>
+                <svg aria-hidden="true"><use href="#i-check" /></svg>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
 
@@ -180,30 +199,83 @@
           <button class="chip" type="button" data-kb="1024">1 MB</button>
           <button class="chip" type="button" data-kb="2048">2 MB</button>
         </div>
-        <div class="select presets__select">
-          <select id="presetSelect" aria-label="Presets" data-i18n-aria="presets">
-            <option value="" data-i18n="presetNone">None</option>
-            <option value="100">100 KB</option>
-            <option value="250">250 KB</option>
-            <option value="500">500 KB</option>
-            <option value="1024">1 MB</option>
-            <option value="2048">2 MB</option>
-          </select>
-          <svg class="select__chevron" aria-hidden="true" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5" /></svg>
+        <div class="pick pick--box pick--presets" id="presetPick">
+          <button
+            class="pick__btn"
+            id="presetBtn"
+            type="button"
+            aria-haspopup="listbox"
+            aria-expanded="false"
+            aria-labelledby="presetsLabel"
+          >
+            <span id="presetLabel">None</span>
+            <svg class="pick__chevron" aria-hidden="true" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5" /></svg>
+          </button>
+          <ul class="pick__menu" id="presetMenu" role="listbox" data-i18n-aria="presets" aria-label="Presets" hidden>
+            <li class="pick__opt" role="option" data-value="" aria-selected="true" tabindex="-1">
+              <span data-i18n="presetNone">None</span>
+              <svg aria-hidden="true"><use href="#i-check" /></svg>
+            </li>
+            <li class="pick__opt" role="option" data-value="100" aria-selected="false" tabindex="-1">
+              <span>100 KB</span>
+              <svg aria-hidden="true"><use href="#i-check" /></svg>
+            </li>
+            <li class="pick__opt" role="option" data-value="250" aria-selected="false" tabindex="-1">
+              <span>250 KB</span>
+              <svg aria-hidden="true"><use href="#i-check" /></svg>
+            </li>
+            <li class="pick__opt" role="option" data-value="500" aria-selected="false" tabindex="-1">
+              <span>500 KB</span>
+              <svg aria-hidden="true"><use href="#i-check" /></svg>
+            </li>
+            <li class="pick__opt" role="option" data-value="1024" aria-selected="false" tabindex="-1">
+              <span>1 MB</span>
+              <svg aria-hidden="true"><use href="#i-check" /></svg>
+            </li>
+            <li class="pick__opt" role="option" data-value="2048" aria-selected="false" tabindex="-1">
+              <span>2 MB</span>
+              <svg aria-hidden="true"><use href="#i-check" /></svg>
+            </li>
+          </ul>
         </div>
       </div>
 
       <div class="setting">
-        <label class="setting__label" for="format" data-i18n="format">Format</label>
-        <div class="select">
-          <select id="format">
-            <option value="keep" data-i18n="formatAuto">Auto</option>
-            <option value="image/webp">WebP</option>
-            <option value="image/jpeg">JPG</option>
-            <option value="image/png">PNG</option>
-            <option value="image/avif">AVIF</option>
-          </select>
-          <svg class="select__chevron" aria-hidden="true" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5" /></svg>
+        <label class="setting__label" id="formatLabel" data-i18n="format">Format</label>
+        <div class="pick pick--box" id="formatPick">
+          <button
+            class="pick__btn"
+            id="formatBtn"
+            type="button"
+            aria-haspopup="listbox"
+            aria-expanded="false"
+            aria-labelledby="formatLabel"
+          >
+            <span id="formatCode">Auto</span>
+            <svg class="pick__chevron" aria-hidden="true" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5" /></svg>
+          </button>
+          <ul class="pick__menu" id="formatMenu" role="listbox" data-i18n-aria="format" aria-label="Format" hidden>
+            <li class="pick__opt" role="option" data-value="keep" aria-selected="true" tabindex="-1">
+              <span data-i18n="formatAuto">Auto</span>
+              <svg aria-hidden="true"><use href="#i-check" /></svg>
+            </li>
+            <li class="pick__opt" role="option" data-value="image/webp" aria-selected="false" tabindex="-1">
+              <span>WebP</span>
+              <svg aria-hidden="true"><use href="#i-check" /></svg>
+            </li>
+            <li class="pick__opt" role="option" data-value="image/jpeg" aria-selected="false" tabindex="-1">
+              <span>JPG</span>
+              <svg aria-hidden="true"><use href="#i-check" /></svg>
+            </li>
+            <li class="pick__opt" role="option" data-value="image/png" aria-selected="false" tabindex="-1">
+              <span>PNG</span>
+              <svg aria-hidden="true"><use href="#i-check" /></svg>
+            </li>
+            <li class="pick__opt" role="option" data-value="image/avif" aria-selected="false" tabindex="-1">
+              <span>AVIF</span>
+              <svg aria-hidden="true"><use href="#i-check" /></svg>
+            </li>
+          </ul>
         </div>
       </div>
 

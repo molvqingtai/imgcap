@@ -29,10 +29,16 @@ const el = {
   zipLabel: $('#zipLabel'),
   clearBtn: $('#clearBtn'),
   target: $('#target'),
-  unit: $('#unit'),
+  unitBtn: $('#unitBtn'),
+  unitMenu: $('#unitMenu'),
+  unitLabel: $('#unitLabel'),
   presets: $('#presets'),
-  presetSelect: $('#presetSelect'),
-  format: $('#format'),
+  presetBtn: $('#presetBtn'),
+  presetMenu: $('#presetMenu'),
+  presetLabel: $('#presetLabel'),
+  formatBtn: $('#formatBtn'),
+  formatMenu: $('#formatMenu'),
+  formatCode: $('#formatCode'),
   resetBtn: $('#resetBtn'),
   compareDlg: $('#compareDlg'),
   cmpName: $('#cmpName'),
@@ -159,8 +165,13 @@ const currentOptions = () => ({ targetBytes: targetBytes(), format: settings.for
 
 function syncSettingsUI() {
   el.target.value = formatAmount(settings.amount)
-  el.unit.value = settings.unit
-  el.format.value = settings.format
+  syncPickerLabels()
+}
+
+function syncPickerLabels() {
+  langPicker.set(getLang())
+  unitPicker.set(settings.unit)
+  formatPicker.set(settings.format)
   syncPresets()
 }
 
@@ -174,10 +185,9 @@ function applyPreset(kb) {
   const asMb = kb >= 1024 && kb % 1024 === 0
   settings.unit = asMb ? 'MB' : 'KB'
   settings.amount = asMb ? kb / 1024 : kb
-  el.unit.value = settings.unit
   el.target.value = formatAmount(settings.amount)
   persist()
-  syncPresets()
+  syncPickerLabels()
   markStale()
 }
 
@@ -187,10 +197,10 @@ function syncPresets() {
     const kb = Number(chip.dataset.kb)
     chip.setAttribute('aria-pressed', bytes === kb * 1024 ? 'true' : 'false')
   }
-  const match = [...el.presetSelect.options].find(
-    (option) => option.value && Number(option.value) * 1024 === bytes
+  const match = [...el.presetMenu.children].find(
+    (option) => option.dataset.value && Number(option.dataset.value) * 1024 === bytes
   )
-  el.presetSelect.value = match ? match.value : ''
+  presetPicker.set(match ? match.dataset.value : '')
 }
 
 function markStale() {
@@ -841,36 +851,12 @@ function bindSettings() {
     markStale()
   })
 
-  el.unit.addEventListener('change', () => {
-    // 500 KB -> 0.49 MB, not 500 MB.
-    const bytes = Number(settings.amount || 0) * unitBytes()
-    settings.unit = el.unit.value
-    settings.amount = bytes / unitBytes()
-    if (!settings.amount || targetBytes() < 1024) settings.amount = settings.unit === 'MB' ? 0.001 : 1
-    el.target.value = formatAmount(settings.amount)
-    persist()
-    syncPresets()
-    markStale()
-  })
+  // Unit changes are handled by the picker itself; see setUnit().
 
   el.presets.addEventListener('click', (event) => {
     const chip = event.target.closest('.chip')
     if (!chip) return
     applyPreset(Number(chip.dataset.kb))
-  })
-
-  el.presetSelect.addEventListener('change', () => {
-    if (!el.presetSelect.value) {
-      syncPresets()
-      return
-    }
-    applyPreset(Number(el.presetSelect.value))
-  })
-
-  el.format.addEventListener('change', () => {
-    settings.format = el.format.value
-    persist()
-    markStale()
   })
 
   el.resetBtn.addEventListener('click', () => {
@@ -1004,84 +990,153 @@ function renderText() {
   chrome()
   el.zipLabel.textContent = t('downloadAll')
   if (state.compare) el.cmpStats.replaceChildren(...compareStats(state.compare))
-  syncLangUI()
+  syncPickerLabels()
 }
 
-// The bar shows the code; the list spells the language out in its own words.
-const LANG_CODE = { en: 'EN', zh: 'ZH', ja: 'JA' }
+let openPicker = null
 
-function syncLangUI() {
-  const current = getLang()
-  el.langCode.textContent = LANG_CODE[current] ?? current.toUpperCase()
-  for (const opt of el.langMenu.children) {
-    opt.setAttribute('aria-selected', String(opt.dataset.lang === current))
+// Every choice on the page is the same little list box: a button that shows the
+// current value, a menu that spells the options out, and nothing native.
+function createPicker({ button, menu, label, onPick }) {
+  const options = [...menu.children]
+
+  const close = ({ focus = false } = {}) => {
+    if (menu.hidden) return
+    menu.hidden = true
+    button.setAttribute('aria-expanded', 'false')
+    if (openPicker === picker) openPicker = null
+    if (focus) button.focus()
   }
-}
 
-function openLang(open, { focus = open } = {}) {
-  el.langMenu.hidden = !open
-  el.langBtn.setAttribute('aria-expanded', String(open))
-  if (!open) return
-  if (focus) {
-    const current = el.langMenu.querySelector('[aria-selected="true"]') ?? el.langMenu.firstElementChild
-    current.focus()
+  const open = ({ focus = true } = {}) => {
+    if (openPicker && openPicker !== picker) openPicker.close()
+    menu.hidden = false
+    button.setAttribute('aria-expanded', 'true')
+    openPicker = picker
+    if (!focus) return
+    const current = options.find((option) => option.getAttribute('aria-selected') === 'true')
+    ;(current ?? options[0]).focus()
   }
-}
 
-function pickLang(value) {
-  openLang(false, { focus: false })
-  el.langBtn.focus()
-  if (value === getLang()) return
-  setLang(value)
-  renderText()
-}
+  const choose = (option) => {
+    close({ focus: true })
+    if (option.dataset.value === picker.value) return
+    onPick?.(option.dataset.value)
+  }
 
-function bindLang() {
-  syncLangUI()
-  el.langBtn.addEventListener('click', () => openLang(el.langMenu.hidden))
-  el.langBtn.addEventListener('keydown', (event) => {
+  const picker = {
+    close,
+    get value() {
+      return button.dataset.value ?? ''
+    },
+    set(value) {
+      const option = options.find((item) => item.dataset.value === value) ?? options[0]
+      button.dataset.value = option.dataset.value
+      label.textContent = option.dataset.short ?? option.textContent.trim()
+      for (const item of options) {
+        item.setAttribute('aria-selected', String(item === option))
+      }
+    },
+  }
+
+  button.addEventListener('click', () => (menu.hidden ? open() : close()))
+  button.addEventListener('keydown', (event) => {
     if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
       event.preventDefault()
-      openLang(true)
+      open()
+    } else if (event.key === 'Escape') {
+      close()
     }
   })
-  el.langMenu.addEventListener('click', (event) => {
-    const opt = event.target.closest('[data-lang]')
-    if (opt) pickLang(opt.dataset.lang)
+  menu.addEventListener('click', (event) => {
+    const option = event.target.closest('[data-value]')
+    if (option) choose(option)
   })
-  el.langMenu.addEventListener('keydown', (event) => {
-    const opts = [...el.langMenu.children]
-    const at = opts.indexOf(document.activeElement)
+  menu.addEventListener('keydown', (event) => {
+    const at = options.indexOf(document.activeElement)
     if (event.key === 'Escape') {
       event.preventDefault()
-      openLang(false, { focus: false })
-      el.langBtn.focus()
+      close({ focus: true })
+    } else if (event.key === 'Tab') {
+      close()
     } else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
       event.preventDefault()
       const step = event.key === 'ArrowDown' ? 1 : -1
-      opts[(at + step + opts.length) % opts.length].focus()
+      options[(at + step + options.length) % options.length].focus()
     } else if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault()
-      if (at >= 0) pickLang(opts[at].dataset.lang)
-    } else if (event.key === 'Tab') {
-      openLang(false, { focus: false })
+      if (at >= 0) choose(options[at])
     }
+  })
+  menu.closest('.pick').addEventListener('focusout', (event) => {
+    if (!event.relatedTarget || menu.contains(event.relatedTarget) || button === event.relatedTarget) return
+    if (event.relatedTarget.closest('.pick') !== menu.closest('.pick')) close()
   })
   document.addEventListener('click', (event) => {
-    if (!el.langMenu.hidden && !event.target.closest('#langPicker')) openLang(false, { focus: false })
+    if (!menu.hidden && event.target.closest('.pick') !== menu.closest('.pick')) close()
   })
-  document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && !el.langMenu.hidden) {
-      openLang(false, { focus: false })
-      el.langBtn.focus()
+
+  return picker
+}
+
+const langPicker = createPicker({
+  button: el.langBtn,
+  menu: el.langMenu,
+  label: el.langCode,
+  onPick: (value) => {
+    setLang(value)
+    renderText()
+  },
+})
+
+const unitPicker = createPicker({
+  button: el.unitBtn,
+  menu: el.unitMenu,
+  label: el.unitLabel,
+  onPick: setUnit,
+})
+
+const formatPicker = createPicker({
+  button: el.formatBtn,
+  menu: el.formatMenu,
+  label: el.formatCode,
+  onPick: (value) => {
+    settings.format = value
+    persist()
+    syncPickerLabels()
+    markStale()
+  },
+})
+
+const presetPicker = createPicker({
+  button: el.presetBtn,
+  menu: el.presetMenu,
+  label: el.presetLabel,
+  onPick: (value) => {
+    if (!value) {
+      syncPickerLabels()
+      return
     }
-  })
+    applyPreset(Number(value))
+  },
+})
+
+function setUnit(value) {
+  // 500 KB -> 0.49 MB, not 500 MB.
+  const bytes = Number(settings.amount || 0) * unitBytes()
+  settings.unit = value
+  settings.amount = bytes / unitBytes()
+  if (!settings.amount || targetBytes() < 1024) settings.amount = settings.unit === 'MB' ? 0.001 : 1
+  el.target.value = formatAmount(settings.amount)
+  persist()
+  syncPickerLabels()
+  markStale()
 }
 
 function boot() {
   initLang()
   harmonizeShortcuts()
-  bindLang()
+  syncPickerLabels()
   // chrome() only owns the numbers; this label is ours from the first frame.
   el.zipLabel.textContent = t('downloadAll')
   syncSettingsUI()
