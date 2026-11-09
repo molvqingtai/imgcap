@@ -829,8 +829,11 @@ function formatBytes(bytes) {
     value /= 1024
     index++
   }
-  const digits = value >= 100 || index === 0 ? 0 : 1
-  return `${value.toFixed(digits)} ${units[index]}`
+  if (index === 0) return `${Math.round(value)} B`
+  // One decimal at every size: dropping it above 100 turned a 500 byte
+  // difference into "100 KB → 101 KB".
+  const text = value.toFixed(1)
+  return `${text.endsWith('.0') ? text.slice(0, -2) : text} ${units[index]}`
 }
 
 function prettyType(type) {
