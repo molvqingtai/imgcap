@@ -429,19 +429,14 @@ function syncRow(item) {
     from.textContent = formatBytes(item.size)
     to.textContent = formatBytes(outSize)
 
-    const saved = item.size - outSize
-    const percent = savingsPercent(saved, item.size)
+    const percent = percentValue(item.size - outSize, item.size)
     if (item.result.keptOriginal) {
       // Nothing was re-encoded: the file already fits, so both sides match.
       delta.textContent = t('kept')
-    } else if (percent > 0) {
-      delta.textContent = `−${percent}%`
-    } else if (percent === 0) {
-      delta.textContent = '0%'
     } else {
-      delta.textContent = `+${Math.abs(percent)}%`
+      delta.textContent = percentLabel(percent)
       // A percent or two of drift is noise, not a warning.
-      if (Math.abs(percent) > 2) delta.classList.add('is-warn')
+      if (percent < -2) delta.classList.add('is-warn')
     }
   } else {
     from.textContent = formatBytes(item.size)
@@ -699,16 +694,12 @@ function chrome() {
     // A few re-encodes end up heavier than the file they replaced; the
     // totals have to say so instead of claiming a saving.
     const diff = totalIn - totalOut
-    const percent = savingsPercent(Math.abs(diff), totalIn)
+    const percent = percentValue(diff, totalIn)
     el.totals.append(
       textSpan(formatBytes(totalIn)),
       textSpan('→', 'arrow'),
       textSpan(formatBytes(totalOut), 'total-out'),
-      percent === 0
-        ? textSpan('· 0%')
-        : diff > 0
-          ? textSpan(`· −${percent}%`, 'saved')
-          : textSpan(`· +${percent}%`, 'larger')
+      textSpan(`· ${percentLabel(percent)}`, diff > 0 ? 'saved' : 'larger')
     )
   } else if (done.length) {
     el.totals.append(textSpan(formatBytes(totalIn)), textSpan(t('withinTarget'), 'saved'))
@@ -767,7 +758,7 @@ function compareStats(item) {
 
   const out = result.blob.size
   const saved = item.size - out
-  const percent = savingsPercent(saved, item.size)
+  const percent = Math.round(Math.abs(percentValue(saved, item.size)) * 100) / 100
   const resized = result.width !== result.originalWidth || result.height !== result.originalHeight
 
   add(t('statOriginal'), formatBytes(item.size))
@@ -813,14 +804,20 @@ function toast(message, tone = 'info', duration = 4600) {
 /* helpers                                                            */
 /* ------------------------------------------------------------------ */
 
-// Savings near 100% lose their meaning when rounded: a 49 MB photo that comes
-// out at 101 KB is not "−100%". Keep one decimal at that end of the scale.
-function savingsPercent(saved, original) {
-  if (!original) return 0
-  const value = (saved / original) * 100
-  if (value <= 0) return Math.round(value)
-  const rounded = Math.round(value)
-  return rounded < 100 ? rounded : Math.min(99.9, Math.round(value * 10) / 10)
+// Percentages are shown with the precision they earn: hundredths while the
+// change is a rounding error, integers once it means something, one decimal at
+// the top of the scale where 99.8% would otherwise read as "−100%".
+function percentValue(saved, original) {
+  return original ? (saved / original) * 100 : 0
+}
+
+function percentLabel(value) {
+  const abs = Math.abs(value)
+  if (abs < 0.005) return '0%'
+  const sign = value > 0 ? '−' : '+'
+  if (abs < 1) return `${sign}${Math.round(abs * 100) / 100}%`
+  if (abs < 99.5 || value < 0) return `${sign}${Math.round(abs)}%`
+  return `${sign}${Math.min(99.9, Math.round(abs * 10) / 10)}%`
 }
 
 function formatBytes(bytes) {
