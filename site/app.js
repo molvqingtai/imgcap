@@ -811,13 +811,15 @@ function percentValue(saved, original) {
   return original ? (saved / original) * 100 : 0
 }
 
+const trimZeros = (text) => text.replace(/\.?0+$/, '')
+
 function percentLabel(value) {
   const abs = Math.abs(value)
-  if (abs < 0.005) return '0%'
+  if (abs < 0.05) return '0%'
   const sign = value > 0 ? '−' : '+'
-  if (abs < 1) return `${sign}${Math.round(abs * 100) / 100}%`
-  if (abs < 99.5 || value < 0) return `${sign}${Math.round(abs)}%`
-  return `${sign}${Math.min(99.9, Math.round(abs * 10) / 10)}%`
+  // One decimal; savings stop at 99.9% because nothing shrinks to nothing,
+  // while growth has no ceiling.
+  return `${sign}${trimZeros((value > 0 ? Math.min(99.9, abs) : abs).toFixed(1))}%`
 }
 
 function formatBytes(bytes) {
@@ -830,10 +832,8 @@ function formatBytes(bytes) {
     index++
   }
   if (index === 0) return `${Math.round(value)} B`
-  // One decimal at every size: dropping it above 100 turned a 500 byte
-  // difference into "100 KB → 101 KB".
-  const text = value.toFixed(1)
-  return `${text.endsWith('.0') ? text.slice(0, -2) : text} ${units[index]}`
+  // One decimal, trailing zero trimmed: 100.2 KB keeps its tenth, 512 KB stays 512 KB.
+  return `${trimZeros(value.toFixed(1))} ${units[index]}`
 }
 
 function prettyType(type) {
