@@ -747,13 +747,18 @@ kbd {
   color: var(--muted);
 }
 
+.drop__sub kbd {
+  width: 20px;
+  padding: 0;
+}
+
 .drop__sub kbd + kbd {
   margin-left: 3px;
 }
 
-.drop__sub kbd:first-of-type {
-  /* the command glyph only reads as a key on a face that draws it properly */
-  font: 500 12px/1 var(--sans);
+.drop__sub kbd svg {
+  width: 12px;
+  height: 12px;
 }
 
 .drop__formats {
