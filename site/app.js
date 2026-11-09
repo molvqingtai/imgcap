@@ -436,11 +436,12 @@ function syncRow(item) {
       delta.textContent = t('kept')
     } else if (percent > 0) {
       delta.textContent = `−${percent}%`
-    } else if (Math.abs(percent) <= 2) {
-      delta.textContent = t('same')
+    } else if (percent === 0) {
+      delta.textContent = '0%'
     } else {
       delta.textContent = `+${Math.abs(percent)}%`
-      delta.classList.add('is-warn')
+      // A percent or two of drift is noise, not a warning.
+      if (Math.abs(percent) > 2) delta.classList.add('is-warn')
     }
   } else {
     from.textContent = formatBytes(item.size)
@@ -703,7 +704,11 @@ function chrome() {
       textSpan(formatBytes(totalIn)),
       textSpan('→', 'arrow'),
       textSpan(formatBytes(totalOut), 'total-out'),
-      diff > 0 ? textSpan(`· −${percent}%`, 'saved') : textSpan(`· +${percent}%`, 'larger')
+      percent === 0
+        ? textSpan('· 0%')
+        : diff > 0
+          ? textSpan(`· −${percent}%`, 'saved')
+          : textSpan(`· +${percent}%`, 'larger')
     )
   } else if (done.length) {
     el.totals.append(textSpan(formatBytes(totalIn)), textSpan(t('withinTarget'), 'saved'))
