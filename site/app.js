@@ -430,7 +430,7 @@ function syncRow(item) {
     to.textContent = formatBytes(outSize)
 
     const saved = item.size - outSize
-    const percent = item.size > 0 ? Math.round((saved / item.size) * 100) : 0
+    const percent = savingsPercent(saved, item.size)
     if (item.result.keptOriginal) {
       // Nothing was re-encoded: the file already fits, so both sides match.
       delta.textContent = t('kept')
@@ -698,7 +698,7 @@ function chrome() {
     // A few re-encodes end up heavier than the file they replaced; the
     // totals have to say so instead of claiming a saving.
     const diff = totalIn - totalOut
-    const percent = Math.round((Math.abs(diff) / totalIn) * 100)
+    const percent = savingsPercent(Math.abs(diff), totalIn)
     el.totals.append(
       textSpan(formatBytes(totalIn)),
       textSpan('→', 'arrow'),
@@ -762,7 +762,7 @@ function compareStats(item) {
 
   const out = result.blob.size
   const saved = item.size - out
-  const percent = item.size ? Math.round((saved / item.size) * 100) : 0
+  const percent = savingsPercent(saved, item.size)
   const resized = result.width !== result.originalWidth || result.height !== result.originalHeight
 
   add(t('statOriginal'), formatBytes(item.size))
@@ -807,6 +807,16 @@ function toast(message, tone = 'info', duration = 4600) {
 /* ------------------------------------------------------------------ */
 /* helpers                                                            */
 /* ------------------------------------------------------------------ */
+
+// Savings near 100% lose their meaning when rounded: a 49 MB photo that comes
+// out at 101 KB is not "−100%". Keep one decimal at that end of the scale.
+function savingsPercent(saved, original) {
+  if (!original) return 0
+  const value = (saved / original) * 100
+  if (value <= 0) return Math.round(value)
+  const rounded = Math.round(value)
+  return rounded < 100 ? rounded : Math.min(99.9, Math.round(value * 10) / 10)
+}
 
 function formatBytes(bytes) {
   if (!bytes) return '0 B'
