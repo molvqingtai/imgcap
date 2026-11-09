@@ -169,16 +169,19 @@ a {
 }
 
 kbd {
-  display: inline-block;
-  min-width: 18px;
-  padding: 1px 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 19px;
+  height: 19px;
+  padding: 0 4px;
   border: 1px solid var(--line-2);
   border-bottom-width: 2px;
   border-radius: 4px;
   background: var(--surface);
-  font: 500 11px/1.5 var(--mono);
-  text-align: center;
+  font: 500 11px/1 var(--mono);
   color: var(--ink-2);
+  vertical-align: middle;
 }
 
 .sep {
@@ -744,9 +747,13 @@ kbd {
   color: var(--muted);
 }
 
+.drop__sub kbd + kbd {
+  margin-left: 3px;
+}
+
 .drop__sub kbd:first-of-type {
-  /* the command glyph only looks like a key on a face that has it */
-  font: 500 13px/1.27 var(--sans);
+  /* the command glyph only reads as a key on a face that draws it properly */
+  font: 500 12px/1 var(--sans);
 }
 
 .drop__formats {
