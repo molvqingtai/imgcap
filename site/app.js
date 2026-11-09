@@ -435,8 +435,8 @@ function syncRow(item) {
       delta.textContent = t('kept')
     } else {
       delta.textContent = percentLabel(percent)
-      // A percent or two of drift is noise, not a warning.
-      if (percent < -2) delta.classList.add('is-warn')
+      // Anything that ends up bigger gets the warning colour, however slight.
+      if (percent < 0) delta.classList.add('is-warn')
     }
   } else {
     from.textContent = formatBytes(item.size)
@@ -770,7 +770,7 @@ function compareStats(item) {
       : saved < 0
         ? t('savedUp', { size: formatBytes(-saved), percent: Math.abs(percent) })
         : t('savedNone'),
-    percent > 0 ? 'good' : 'warn'
+    saved > 0 ? 'good' : saved < 0 ? 'warn' : ''
   )
   add(resized ? t('statDimensions') : t('statResolution'), `${result.width}×${result.height}`)
   add(
