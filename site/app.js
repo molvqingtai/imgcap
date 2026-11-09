@@ -758,17 +758,17 @@ function compareStats(item) {
 
   const out = result.blob.size
   const saved = item.size - out
-  const percent = Math.round(Math.abs(percentValue(saved, item.size)) * 100) / 100
+  const delta = percentLabel(percentValue(saved, item.size))
   const resized = result.width !== result.originalWidth || result.height !== result.originalHeight
 
   add(t('statOriginal'), formatBytes(item.size))
   add(t('statOutput'), formatBytes(out))
   add(
     t('statSaved'),
-    percent > 0
-      ? t('savedDown', { size: formatBytes(saved), percent })
+    saved > 0
+      ? t('savedDown', { size: formatBytes(saved), delta })
       : saved < 0
-        ? t('savedUp', { size: formatBytes(-saved), percent: Math.abs(percent) })
+        ? t('savedUp', { size: formatBytes(-saved), delta })
         : t('savedNone'),
     saved > 0 ? 'good' : saved < 0 ? 'warn' : ''
   )

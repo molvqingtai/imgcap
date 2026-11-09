@@ -83,8 +83,8 @@ const DICT = {
     statResolution: 'Resolution',
     statFormat: 'Format',
     statTarget: 'Target',
-    savedDown: ({ size, percent }) => `−${size} · −${percent}%`,
-    savedUp: ({ size, percent }) => `+${size} · +${percent}%`,
+    savedDown: ({ size, delta }) => `−${size} · ${delta}`,
+    savedUp: ({ size, delta }) => `+${size} · ${delta}`,
     savedNone: 'none'
   },
   zh: {
@@ -158,8 +158,8 @@ const DICT = {
     statResolution: '分辨率',
     statFormat: '格式',
     statTarget: '目标',
-    savedDown: ({ size, percent }) => `−${size} · −${percent}%`,
-    savedUp: ({ size, percent }) => `+${size} · +${percent}%`,
+    savedDown: ({ size, delta }) => `−${size} · ${delta}`,
+    savedUp: ({ size, delta }) => `+${size} · ${delta}`,
     savedNone: '无'
   },
   ja: {
@@ -233,8 +233,8 @@ const DICT = {
     statResolution: '解像度',
     statFormat: '形式',
     statTarget: '目標',
-    savedDown: ({ size, percent }) => `−${size} · −${percent}%`,
-    savedUp: ({ size, percent }) => `+${size} · +${percent}%`,
+    savedDown: ({ size, delta }) => `−${size} · ${delta}`,
+    savedUp: ({ size, delta }) => `+${size} · ${delta}`,
     savedNone: 'なし'
   }
 }
